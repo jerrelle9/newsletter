@@ -1,0 +1,98 @@
+import { Reveal } from "@/components/layout/Reveal";
+import { SectionNumber } from "@/components/layout/SectionNumber";
+
+export function GmNoteSection() {
+  const values = ["Clarity", "Execution", "Trust", "Regional scale"];
+
+  return (
+    <section
+      id="section-3"
+      className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_20%_24%,rgba(0,180,216,0.12),transparent_20%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
+    >
+      <SectionNumber number="03" />
+
+      <div className="mx-auto grid min-h-screen max-w-[75vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
+        <Reveal className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_90px_rgba(1,17,27,0.52)] backdrop-blur-2xl md:p-10">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.14),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))]" />
+          <div className="relative">
+            <div className="text-sm uppercase tracking-[0.3em] text-[rgba(0,180,230,0.72)]">
+              A note from our GM
+            </div>
+
+            <div className="mt-8 text-3xl font-light leading-tight text-(--white) md:text-3xl md:leading-[1.08]">
+              <span className="text-4xl font-black text-(--blue-lt) md:text-5xl">
+                G
+              </span>
+              roup
+              <span className="ml-3 text-4xl font-black text-(--blue-lt) md:text-5xl">
+                D
+              </span>
+              igital
+              <span className="ml-3 mr-[-9] text-4xl font-black text-(--blue-lt) md:text-5xl">
+                T
+              </span>
+              echnology
+              <span className="ml-3 text-4xl font-black text-(--blue-lt) md:text-5xl">
+                D
+              </span>
+              ivision exists to help Republic move faster,
+              stay dependable, and keep improving, by bringing clear technology
+              leadership and customer focus into one division.
+            </div>
+
+            <p className="mt-8 max-w-3xl text-base leading-8 text-(--light)">
+              The department&apos;s advantage is not only what it builds, but how it
+              builds: shared standards, modern platforms, visible ownership, and the
+              discipline to deliver meaningful change inside a regulated environment.
+            </p>
+
+            <div className="mt-10 flex items-center gap-4">
+              <div className="grid h-14 w-14 place-items-center rounded-full bg-[linear-gradient(135deg,var(--blue-lt),var(--blue))] font-bold text-(--navy) shadow-[0_18px_34px_rgba(0,150,199,0.4)]">
+                M
+              </div>
+              <div>
+                <div className="font-semibold text-white">Marlon Persad</div>
+                <div className="text-sm text-(--muted)">
+                  General Manager, Group Digital Technology Division
+                </div>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="grid gap-4">
+          <div className="rounded-4xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-6 backdrop-blur-xl">
+            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--dim)">
+              Leadership signal
+            </div>
+            <div className="mt-4 text-3xl font-black tracking-[-0.04em] text-white">
+              Build banking that feels current, resilient, and ready for scale.
+            </div>
+            <p className="mt-4 text-sm leading-7 text-(--light)">
+              GDTD is positioned to translate strategy into dependable delivery by combining
+              modern platforms, strong governance, and customer-centred execution across the
+              bank.
+
+            </p>
+          </div>
+
+          <div className="rounded-4xl border border-[rgba(245,166,35,0.22)] bg-[rgba(245,166,35,0.12)] p-6">
+            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--gold)">
+              Operating values
+            </div>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {values.map((value) => (
+                <div
+                  key={value}
+                  className="rounded-full border border-(--border) bg-[rgba(11,29,46,0.5)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.22em] text-white"
+                >
+                  {value}
+                </div>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
