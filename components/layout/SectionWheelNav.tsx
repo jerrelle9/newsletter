@@ -12,6 +12,14 @@ export function SectionWheelNav() {
     [activeHref]
   );
 
+  // Prevent browser scroll-position restore on reload
+  useEffect(() => {
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   // Scroll-based detection: observe a 1% band at the viewport midpoint.
   // threshold:0 fires on any intersection, so even sections taller than the
   // viewport (where ratio never reaches 0.2) are detected correctly.
@@ -46,9 +54,9 @@ export function SectionWheelNav() {
       <div className="relative flex items-center">
         <div className="relative h-[320px] w-[320px]">
           <div className="absolute inset-0 rounded-full border border-[var(--border)] bg-[radial-gradient(circle_at_center,rgba(2,48,74,0.94),rgba(1,29,46,0.96))] shadow-[0_30px_100px_rgba(1,17,27,0.78)] backdrop-blur-2xl" />
-          <div className="absolute inset-[16px] rounded-full border border-[rgba(0,180,216,0.2)]" />
-          <div className="absolute inset-[34px] rounded-full border border-[rgba(0,150,199,0.16)]" />
-          <div className="absolute inset-[52px] rounded-full border border-[var(--border)]" />
+          {/* <div className="absolute inset-[16px] rounded-full border border-[rgba(0,180,216,0.2)]" /> */}
+          {/* <div className="absolute inset-[34px] rounded-full border border-[rgba(0,150,199,0.16)]" /> */}
+          {/* <div className="absolute inset-[52px] rounded-full border border-[var(--border)]" /> */}
 
           {navItems.map((item, index) => {
             const angle = -90 + (360 / navItems.length) * index;
