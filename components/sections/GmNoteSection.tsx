@@ -11,33 +11,21 @@ export function GmNoteSection() {
     >
       <SectionNumber number="03" />
 
-      <div className="mx-auto grid min-h-screen max-w-[75vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
+      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
         <Reveal className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_90px_rgba(1,17,27,0.52)] backdrop-blur-2xl md:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.14),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))]" />
           <div className="relative">
-            <div className="text-sm uppercase tracking-[0.3em] text-[rgba(0,180,230,0.72)]">
+            <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
               A note from our GM
             </div>
 
             <div className="mt-8 text-3xl font-light leading-tight text-(--white) md:text-3xl md:leading-[1.08]">
-              <span className="text-4xl font-black text-(--blue-lt) md:text-5xl">
-                G
-              </span>
-              roup
-              <span className="ml-3 text-4xl font-black text-(--blue-lt) md:text-5xl">
-                D
-              </span>
-              igital
-              <span className="ml-3 mr-[-9] text-4xl font-black text-(--blue-lt) md:text-5xl">
-                T
-              </span>
-              echnology
-              <span className="ml-3 text-4xl font-black text-(--blue-lt) md:text-5xl">
-                D
-              </span>
-              ivision exists to help Republic move faster,
-              stay dependable, and keep improving, by bringing clear technology
-              leadership and customer focus into one division.
+              <span className="text-4xl font-black text-(--c-primary) md:text-5xl">G</span>roup
+              <span className="ml-3 text-4xl font-black text-(--c-primary) md:text-5xl">D</span>igital
+              <span className="ml-3 mr-[-9] text-4xl font-black text-(--c-primary) md:text-5xl">T</span>echnology
+              <span className="ml-3 text-4xl font-black text-(--c-primary) md:text-5xl">D</span>ivision
+              exists to help Republic move faster, stay dependable, and keep improving, by
+              bringing clear technology leadership and customer focus into one division.
             </div>
 
             <p className="mt-8 max-w-3xl text-base leading-8 text-(--light)">
@@ -47,7 +35,7 @@ export function GmNoteSection() {
             </p>
 
             <div className="mt-10 flex items-center gap-4">
-              <div className="grid h-14 w-14 place-items-center rounded-full bg-[linear-gradient(135deg,var(--blue-lt),var(--blue))] font-bold text-(--navy) shadow-[0_18px_34px_rgba(0,150,199,0.4)]">
+              <div className="grid h-14 w-14 place-items-center rounded-full bg-[linear-gradient(135deg,var(--c-primary),var(--blue))] font-bold text-(--navy) shadow-[0_18px_34px_rgba(0,150,199,0.4)]">
                 M
               </div>
               <div>
@@ -62,22 +50,21 @@ export function GmNoteSection() {
 
         <Reveal className="grid gap-4">
           <div className="rounded-4xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-6 backdrop-blur-xl">
-            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--dim)">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
               Leadership signal
             </div>
-            <div className="mt-4 text-3xl font-black tracking-[-0.04em] text-white">
+            <h3 className="mt-4 text-2xl font-bold text-white">
               Build banking that feels current, resilient, and ready for scale.
-            </div>
+            </h3>
             <p className="mt-4 text-sm leading-7 text-(--light)">
               GDTD is positioned to translate strategy into dependable delivery by combining
               modern platforms, strong governance, and customer-centred execution across the
               bank.
-
             </p>
           </div>
 
-          <div className="rounded-4xl border border-[rgba(245,166,35,0.22)] bg-[rgba(245,166,35,0.12)] p-6">
-            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--gold)">
+          <div className="rounded-4xl border border-(--c-secondary)/20 bg-(--c-secondary)/10 p-6">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-secondary)">
               Operating values
             </div>
             <div className="mt-4 flex flex-wrap gap-3">

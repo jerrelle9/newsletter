@@ -24,6 +24,11 @@
   --accent: var(--blue-lt);
   --accent-strong: var(--teal);
   --line: var(--border);
+
+  /* Three-colour semantic palette */
+  --c-primary: var(--blue-lt);   /* #00b4e6 – CTAs, highlights, interactive */
+  --c-secondary: var(--purple);  /* #8b5cf6 – secondary callouts, feature blocks */
+  --c-accent: var(--green);      /* #06d6a0 – status, positive signals */
 }
 
 @theme inline {

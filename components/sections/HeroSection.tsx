@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ChevronDown, ShieldCheck, Sparkles, Workflow } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -77,16 +77,16 @@ export function HeroSection() {
         ))}
       </motion.div>
 
-      <div className="relative mx-auto grid w-full max-w-[75vw] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:px-16">
+      <div className="relative ml-[8vw] grid w-full max-w-[66vw] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:px-16">
         <Reveal className="max-w-3xl">
-          <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[rgba(0,180,216,0.16)] bg-[rgba(0,180,216,0.1)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-(--blue-lt) backdrop-blur-xl">
+          {/* <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[rgba(0,180,216,0.16)] bg-[rgba(0,180,216,0.1)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-(--blue-lt) backdrop-blur-xl">
             <span className="h-2 w-2 rounded-full bg-(--teal) shadow-[0_0_18px_rgba(0,180,216,0.85)]" />
             Issue 01 / GTD / Republic Bank
-          </div>
+          </div> */}
           <h1 className="max-w-2xl text-3xl font-black leading-[0.88] tracking-[-0.04em] md:text-5xl xl:text-[3.6rem]">
             <span className="block text-(--light)">MEET</span>
             <span className="block mt-4 mb-4 text-center xl:text-[8.6rem] text-transparent [-webkit-text-stroke:1px_rgba(0,180,230,0.9)]">
-              GTD
+              GDTD
             </span>
             RBL&apos;s
             <span className="block text-(--blue-lt)">technology engine.</span>
@@ -119,11 +119,11 @@ export function HeroSection() {
                   key={item.label}
                   className="rounded-3xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-4 backdrop-blur-xl"
                 >
-                  <div className="flex items-center gap-3 text-(--blue-lt)">
-                    <div className="rounded-2xl border border-[rgba(0,180,216,0.18)] bg-[rgba(0,180,216,0.1)] p-2.5">
+                  <div className="flex items-center gap-3 text-(--c-primary)">
+                    <div className="rounded-2xl border border-(--c-primary)/18 bg-(--c-primary)/10 p-2.5">
                       <Icon className="h-4 w-4" />
                     </div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-(--dim)">
+                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                       {item.label}
                     </div>
                   </div>
@@ -135,7 +135,7 @@ export function HeroSection() {
             })}
           </div>
 
-          <div className="mt-10 flex items-center gap-3 text-xs uppercase tracking-[0.3em] text-[rgba(0,180,230,0.7)]">
+          <div className="mt-10 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             <ChevronDown className="h-4 w-4" />
             Scroll to enter the command layer
           </div>
@@ -153,14 +153,14 @@ export function HeroSection() {
               <div className="relative">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-[11px] font-medium uppercase tracking-[0.3em] text-[rgba(0,180,230,0.78)]">
+                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                       Command center snapshot
                     </div>
-                    <h2 className="mt-3 text-2xl font-bold tracking-[-0.03em] text-white md:text-3xl">
+                    <h2 className="mt-3 text-2xl font-bold tracking-[-0.02em] text-white">
                       Technology leadership across the Division.
                     </h2>
                   </div>
-                  <div className="rounded-full border border-[rgba(6,214,160,0.18)] bg-[rgba(6,214,160,0.1)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-(--green)">
+                  <div className="rounded-full border border-(--c-accent)/18 bg-(--c-accent)/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-accent)">
                     live posture
                   </div>
                 </div>
@@ -175,11 +175,11 @@ export function HeroSection() {
                         <div className={`text-3xl font-black ${item.color}`}>
                           {item.value}
                         </div>
-                        <div className="text-[10px] font-medium uppercase tracking-[0.26em] text-(--dim)">
+                        <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                           0{index + 1}
                         </div>
                       </div>
-                      <div className="mt-2 text-sm uppercase tracking-[0.2em] text-(--muted)">
+                      <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--muted)">
                         {item.label}
                       </div>
                       <div className="mt-4 h-1.5 rounded-full bg-white/6">
@@ -194,7 +194,7 @@ export function HeroSection() {
 
                 <div className="mt-6 grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
                   <div className="rounded-3xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-5">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--dim)">
+                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                       Why it matters
                     </div>
                     <p className="mt-3 text-sm leading-7 text-(--light)">
@@ -204,13 +204,13 @@ export function HeroSection() {
                     </p>
                   </div>
 
-                  <div className="rounded-3xl border border-[rgba(139,92,246,0.18)] bg-[rgba(139,92,246,0.12)] p-5">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-[rgba(167,139,250,0.9)]">
+                  <div className="rounded-3xl border border-(--c-secondary)/18 bg-(--c-secondary)/10 p-5">
+                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-secondary)/90">
                       Operating signal
                     </div>
-                    <div className="mt-3 text-3xl font-black tracking-[-0.04em] text-white">
+                    <div className="mt-3 text-2xl font-bold tracking-[-0.02em] text-white">
                       Always-ready,
-                      <span className="block text-(--purp-lt)">future-focused support.</span>
+                      <span className="block text-(--c-secondary)">future-focused support.</span>
                     </div>
                   </div>
                 </div>

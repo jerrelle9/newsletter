@@ -29,23 +29,24 @@ export function ContactSection() {
     >
       <SectionNumber number="06" />
 
-      <div className="mx-auto grid min-h-screen max-w-[75vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-16">
+      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-16">
         <Reveal>
-          <div className="text-sm uppercase tracking-[0.3em] text-[rgba(0,180,230,0.72)]">
+          <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Reach out
           </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.92] tracking-[-0.04em] md:text-6xl">
+          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
             Engage the department building the bank&apos;s next capabilities.
           </h2>
-          <p className="mt-6 text-(--light) leading-8">
-            This is your channel to GDTD's fast routing channels with confidence that the right people will pick up the work.
+          <p className="mt-6 text-base leading-8 text-(--light)">
+            This is your channel to GDTD's fast routing channels with confidence
+            that the right people will pick up the work.
           </p>
-          <div className="mt-8 inline-flex items-center rounded-full border border-[rgba(6,214,160,0.18)] bg-[rgba(6,214,160,0.1)] px-4 py-2 text-xs uppercase tracking-[0.25em] text-(--green)">
+          <div className="mt-8 inline-flex items-center rounded-full border border-(--c-accent)/18 bg-(--c-accent)/10 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-accent)">
             Typically replies within 24h
           </div>
 
           <div className="mt-10 rounded-4xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-6 backdrop-blur-xl">
-            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-(--dim)">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
               Engagement model
             </div>
             <p className="mt-4 text-base leading-8 text-(--light)">
@@ -66,12 +67,12 @@ export function ContactSection() {
                 className="rounded-4xl border border-(--border) bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] shadow-[0_18px_70px_rgba(1,17,27,0.3)] backdrop-blur-xl"
               >
                 <CardContent className="flex items-center gap-4 p-6">
-                  <div className="rounded-2xl border border-(--border) bg-[rgba(255,255,255,0.04)] p-3 text-(--blue-lt)">
+                  <div className="rounded-2xl border border-(--border) bg-[rgba(255,255,255,0.04)] p-3 text-(--c-primary)">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
                     <div className="font-semibold text-white">{item.title}</div>
-                    <div className="mt-1 text-sm leading-7 text-(--muted)">
+                    <div className="mt-1 text-sm leading-7 text-(--light)">
                       {item.body}
                     </div>
                   </div>

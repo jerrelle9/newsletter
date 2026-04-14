@@ -10,7 +10,7 @@ export default function HomePage() {
   return (
     <main className="relative min-h-screen overflow-x-hidden text-white">
       <div className="pointer-events-none fixed inset-x-0 top-0 z-50">
-        <div className="mx-auto flex max-w-[75vw] items-center justify-between px-4 py-4 md:px-8 lg:px-12">
+        <div className="ml-[8vw] flex max-w-[66vw] items-center justify-between px-4 py-4 md:px-8 lg:px-12">
           <div className="pointer-events-auto inline-flex items-center gap-3 rounded-full border border-[var(--border)] bg-[rgba(1,29,46,0.72)] px-4 py-2 shadow-[0_20px_80px_rgba(1,17,27,0.55)] backdrop-blur-xl">
             <span className="h-2.5 w-2.5 rounded-full bg-[var(--teal)] shadow-[0_0_18px_rgba(0,180,216,0.9)]" />
             <span className="text-[10px] font-medium uppercase tracking-[0.36em] text-[var(--light)]">
@@ -18,7 +18,7 @@ export default function HomePage() {
             </span>
           </div>
 
-          <div className="pointer-events-auto hidden items-center gap-2 rounded-full border border-[var(--border)] bg-[rgba(11,29,46,0.7)] p-1 backdrop-blur-xl md:flex">
+          {/* <div className="pointer-events-auto hidden items-center gap-2 rounded-full border border-[var(--border)] bg-[rgba(11,29,46,0.7)] p-1 backdrop-blur-xl md:flex">
             {[
               "Technology-first",
               "Platform-led",
@@ -31,7 +31,7 @@ export default function HomePage() {
                 {item}
               </span>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 

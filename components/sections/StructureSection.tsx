@@ -27,15 +27,15 @@ export function StructureSection() {
     >
       <SectionNumber number="04" />
 
-      <div className="mx-auto min-h-screen max-w-[82vw] px-6 py-24 md:px-10 lg:px-16">
+      <div className="ml-[8vw] min-h-screen max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <div className="text-sm uppercase tracking-[0.3em] text-[rgba(0,180,230,0.72)]">
+          <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Our structure
           </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.92] tracking-[-0.04em] md:text-6xl">
+          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
             Structured to deliver across the wider IT organisation and within GDTD itself.
           </h2>
-          <p className="mt-5 leading-8 text-(--light)">
+          <p className="mt-5 text-base leading-8 text-(--light)">
             This view shows first where GDTD sits in Republic&apos;s wider technology structure,
             then how leadership and reporting lines flow within the division itself.
           </p>
@@ -44,7 +44,7 @@ export function StructureSection() {
         {/* Layer 1: IT organisation placement */}
         <Reveal className="mt-16">
           <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
-            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-[rgba(0,180,230,0.78)]">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
               Organisational placement
             </div>
 
@@ -63,7 +63,7 @@ export function StructureSection() {
                 ))}
               </div>
 
-              <div className="mt-8 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs uppercase tracking-[0.24em] text-cyan-200">
+              <div className="mt-8 rounded-full border border-(--c-primary)/20 bg-(--c-primary)/10 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                 GTD is the in-scope division for this site
               </div>
             </div>
@@ -73,14 +73,14 @@ export function StructureSection() {
         {/* Layer 2: GTD internal structure */}
         <Reveal className="mt-10">
           <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
-            <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-[rgba(0,180,230,0.78)]">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
               GTD reporting structure
             </div>
 
             <div className="mt-8 mx-auto max-w-5xl">
               <div className="flex flex-col items-center text-center">
                 <OrgBubble label="GM" size="md" />
-                <div className="mt-4 text-[11px] font-medium uppercase tracking-[0.3em] text-[rgba(0,180,230,0.78)]">
+                <div className="mt-4 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                   {gdtdStructure.leader.role}
                 </div>
                 <div className="mt-2 text-xl font-semibold text-white">
@@ -106,8 +106,8 @@ export function StructureSection() {
                       onClick={() => setActiveTeamName(team.name)}
                       className={`rounded-4xl border p-5 text-left transition duration-200 ${
                         isActive
-                          ? "border-[rgba(0,180,216,0.3)] bg-[rgba(255,255,255,0.06)] shadow-[0_18px_40px_rgba(0,180,216,0.12)]"
-                          : "border-(--border) bg-[rgba(255,255,255,0.03)] hover:border-[rgba(0,180,216,0.18)] hover:bg-[rgba(255,255,255,0.05)]"
+                          ? "border-(--c-primary)/30 bg-[rgba(255,255,255,0.06)] shadow-[0_18px_40px_rgba(0,180,216,0.12)]"
+                          : "border-(--border) bg-[rgba(255,255,255,0.03)] hover:border-(--c-primary)/18 hover:bg-[rgba(255,255,255,0.05)]"
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
@@ -115,13 +115,13 @@ export function StructureSection() {
                           <OrgBubble label={team.initials} gradient={team.color} />
                           <div>
                             <div className="font-semibold text-white">{team.name}</div>
-                            <div className="text-xs uppercase tracking-[0.25em] text-(--dim)">
+                            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                               {descriptors[index]}
                             </div>
                           </div>
                         </div>
                         <ChevronRight
-                          className={`h-5 w-5 shrink-0 text-(--blue-lt) transition-transform ${
+                          className={`h-5 w-5 shrink-0 text-(--c-primary) transition-transform ${
                             isActive ? "rotate-90" : "rotate-0"
                           }`}
                         />
@@ -136,13 +136,13 @@ export function StructureSection() {
               </div>
 
               {activeTeam ? (
-                <div className="mt-8 rounded-4xl border border-[rgba(0,180,216,0.22)] bg-[rgba(0,180,216,0.08)] p-6 backdrop-blur-xl md:p-8">
+                <div className="mt-8 rounded-4xl border border-(--c-primary)/22 bg-(--c-primary)/8 p-6 backdrop-blur-xl md:p-8">
                   <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                     <div className="max-w-2xl">
-                      <div className="text-[11px] font-medium uppercase tracking-[0.28em] text-[rgba(0,180,230,0.78)]">
+                      <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                         Expanded reporting line
                       </div>
-                      <h3 className="mt-3 text-2xl font-bold text-white md:text-3xl">
+                      <h3 className="mt-3 text-2xl font-bold text-white">
                         {activeTeam.name}
                       </h3>
                       <p className="mt-3 text-sm leading-7 text-(--light)">
@@ -150,14 +150,14 @@ export function StructureSection() {
                       </p>
                     </div>
 
-                    <div className="rounded-full border border-(--border) bg-[rgba(11,29,46,0.52)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-(--light)">
+                    <div className="rounded-full border border-(--border) bg-[rgba(11,29,46,0.52)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--light)">
                       {activeTeam.managers.length} manager{activeTeam.managers.length === 1 ? "" : "s"}
                     </div>
                   </div>
 
                   <div className="mt-6 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
                     <div className="rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-5">
-                      <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-[rgba(0,180,230,0.78)]">
+                      <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                         Senior manager
                       </div>
                       <div className="mt-3 flex items-center gap-4">
@@ -170,7 +170,7 @@ export function StructureSection() {
                     </div>
 
                     <div className="rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-5">
-                      <div className="text-[11px] font-medium uppercase tracking-[0.24em] text-[rgba(0,180,230,0.78)]">
+                      <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                         Manager{activeTeam.managers.length === 1 ? "" : "s"}
                       </div>
                       <div className="mt-3 grid gap-4">
@@ -193,30 +193,30 @@ export function StructureSection() {
                   {activeTeam.reports.length > 0 ? (
                     <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                       {activeTeam.reports.map((report, index) => (
-                      <div
-                        key={report.name}
-                        className="rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-5 text-center"
-                      >
-                        <div className="mx-auto flex w-fit items-center gap-3">
-                          <OrgBubble
-                            label={report.name
-                              .split(" ")
-                              .map((part) => part[0])
-                              .join("")
-                              .slice(0, 3)}
-                            gradient={activeTeam.color}
-                          />
-                          <div className="text-[10px] font-medium uppercase tracking-[0.24em] text-(--dim)">
-                            0{index + 1}
+                        <div
+                          key={report.name}
+                          className="rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-5 text-center"
+                        >
+                          <div className="mx-auto flex w-fit items-center gap-3">
+                            <OrgBubble
+                              label={report.name
+                                .split(" ")
+                                .map((part) => part[0])
+                                .join("")
+                                .slice(0, 3)}
+                              gradient={activeTeam.color}
+                            />
+                            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
+                              0{index + 1}
+                            </div>
+                          </div>
+                          <div className="mt-4 text-base font-semibold text-white">
+                            {report.name}
+                          </div>
+                          <div className="mt-2 text-sm leading-6 text-(--light)">
+                            {report.role}
                           </div>
                         </div>
-                        <div className="mt-4 text-base font-semibold text-white">
-                          {report.name}
-                        </div>
-                        <div className="mt-2 text-sm leading-6 text-(--light)">
-                          {report.role}
-                        </div>
-                      </div>
                       ))}
                     </div>
                   ) : (

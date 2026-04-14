@@ -25,22 +25,22 @@ export function WhoWeAreSection() {
     >
       <SectionNumber number="02" />
 
-      <div className="mx-auto grid min-h-screen max-w-[75vw] gap-16 px-6 py-24 md:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-16">
+      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-16 px-6 py-24 md:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:px-16">
         <Reveal className="max-w-2xl">
-          <div className="text-sm uppercase tracking-[0.3em] text-[rgba(0,180,230,0.72)]">
+          <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Who we are
           </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.92] tracking-[-0.04em] md:text-6xl">
+          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
             The technology group that turns banking ambition into operating capability.
           </h2>
 
-          <div className="mt-6 space-y-5 text-(--light) leading-8">
-            <p>
+          <div className="mt-6 space-y-5 leading-8 text-(--light)">
+            <p className="text-base leading-8">
               From payments and onboarding to architecture, platforms, and service
               oversight, the Group Digital Technology Division helps turn strategy into
               dependable services and better customer experiences.
             </p>
-            <p>
+            <p className="text-base leading-8">
               It is not just a support function. It is the department that sets the
               pace for how modern Republic Bank can design, build, launch, and scale.
             </p>
@@ -50,7 +50,7 @@ export function WhoWeAreSection() {
             {operatingModes.map((mode) => (
               <div
                 key={mode}
-                className="rounded-full border border-(--border) bg-[rgba(255,255,255,0.03)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.24em] text-(--light)"
+                className="rounded-full border border-(--border) bg-[rgba(255,255,255,0.03)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--light)"
               >
                 {mode}
               </div>
@@ -58,7 +58,7 @@ export function WhoWeAreSection() {
           </div>
 
           <div className="mt-10 rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-6 backdrop-blur-xl">
-            <div className="text-[11px] font-medium uppercase tracking-[0.3em] text-(--dim)">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
               Strategic role
             </div>
             <p className="mt-3 text-base leading-8 text-(--light)">
@@ -77,13 +77,13 @@ export function WhoWeAreSection() {
                 className="rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_18px_60px_rgba(1,10,24,0.35)] backdrop-blur-xl"
               >
                 <CardContent className="p-8">
-                  <div className="text-[10px] font-medium uppercase tracking-[0.28em] text-(--dim)">
+                  <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                     Signal 0{index + 1}
                   </div>
                   <div className={`text-5xl font-black ${item.color}`}>
                     {item.value}
                   </div>
-                  <div className="mt-3 text-sm uppercase tracking-[0.25em] text-(--muted)">
+                  <div className="mt-3 text-[11px] font-medium uppercase tracking-[0.26em] text-(--muted)">
                     {item.label}
                   </div>
                   <div className="mt-4 text-sm leading-7 text-(--light)">
