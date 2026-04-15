@@ -28,14 +28,14 @@ export const products = [
     body: " Grafana transforms raw monitoring data into actionable insights, helping us quickly understand system health and business performance across our hybrid cloud environment.",
     icon: Building2,
   },
-  {
-    title: "Customer Channels",
-    body: "Support experiences across mobile, online, branch-adjacent, and partner-connected touchpoints.",
-    icon: Smartphone,
-  },
-  {
-    title: "Change Governance",
-    body: "Drive standards, visibility, and execution confidence across the portfolio.",
-    icon: Layers3,
-  },
+  // {
+  //   title: "Customer Channels",
+  //   body: "Support experiences across mobile, online, branch-adjacent, and partner-connected touchpoints.",
+  //   icon: Smartphone,
+  // },
+  // {
+  //   title: "Change Governance",
+  //   body: "Drive standards, visibility, and execution confidence across the portfolio.",
+  //   icon: Layers3,
+  // },
 ];

@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
@@ -10,58 +9,23 @@ import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { gdtdStructure } from "@/data/gdtd-structure";
 import { orgOverview } from "@/data/org-overview";
 
-/* ─── Tooltip portal ──────────────────────────────────────────────────────── */
-function NodeTooltip({ message, rect }: { message: string; rect: DOMRect }) {
-  return createPortal(
-    <div
-      style={{
-        position: "fixed",
-        top: rect.top + rect.height / 2,
-        left: rect.right + 14,
-        transform: "translateY(-50%)",
-        zIndex: 9999,
-        maxWidth: 280,
-      }}
-      className="pointer-events-none rounded-2xl border border-(--c-primary)/20 bg-[rgba(1,17,27,0.92)] px-4 py-3 shadow-[0_16px_40px_rgba(1,17,27,0.6)] backdrop-blur-xl"
-    >
-      <p className="text-justify text-xs leading-5 text-(--light)">{message}</p>
-    </div>,
-    document.body
-  );
-}
-
 /* ─── GM node ─────────────────────────────────────────────────────────────── */
 function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [rect, setRect] = useState<DOMRect | null>(null);
-  const hasMsg = !!leader.message;
-
   return (
-    <>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, scale: 0.8, y: 10 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.5 }}
-        transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 22 }}
-        className="flex flex-col items-center text-center"
-        onMouseEnter={() => { if (hasMsg && ref.current) setRect(ref.current.getBoundingClientRect()); }}
-        onMouseLeave={() => setRect(null)}
-      >
-        <div className="relative">
-          <OrgBubble label="GM" size="lg" image={leader.image} />
-          {hasMsg && (
-            <div className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--navy)] bg-(--c-primary)" />
-          )}
-        </div>
-        <div className="mt-4 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
-          {leader.role}
-        </div>
-        <div className="mt-1 text-xl font-semibold text-white">{leader.name}</div>
-        <div className="mt-1 text-sm text-(--dim)">Group Digital Technology Division</div>
-      </motion.div>
-      {rect && hasMsg && <NodeTooltip message={leader.message!} rect={rect} />}
-    </>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8, y: 10 }}
+      whileInView={{ opacity: 1, scale: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 22 }}
+      className="flex flex-col items-center text-center"
+    >
+      <OrgBubble label="GM" size="lg" image={leader.image} />
+      <div className="mt-4 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
+        {leader.role}
+      </div>
+      <div className="mt-1 text-xl font-semibold text-white">{leader.name}</div>
+      <div className="mt-1 text-sm text-(--dim)">Group Digital Technology Division</div>
+    </motion.div>
   );
 }
 
@@ -110,6 +74,42 @@ function ManagerCard({
   name,
   role,
   image,
+  delay,
+}: {
+  name: string;
+  role?: string;
+  image?: string;
+  delay: number;
+}) {
+  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ delay, duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+      className="relative flex items-center gap-4 rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.5)] p-4"
+    >
+      <OrgBubble
+        label={initials}
+        gradient="from-[var(--blue)] to-[var(--purple)]"
+        image={image}
+        size="md"
+      />
+      <div className="min-w-0">
+        <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
+        <div className="mt-1 truncate text-sm font-semibold text-white">{name}</div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ─── Engineering manager card with message ──────────────────────────────── */
+function EngineeringManagerCard({
+  name,
+  role,
+  image,
   message,
   delay,
 }: {
@@ -119,39 +119,35 @@ function ManagerCard({
   message?: string;
   delay: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [rect, setRect] = useState<DOMRect | null>(null);
   const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
-  const hasMsg = !!message;
 
   return (
-    <>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 14, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ delay, duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-        onMouseEnter={() => { if (hasMsg && ref.current) setRect(ref.current.getBoundingClientRect()); }}
-        onMouseLeave={() => setRect(null)}
-        className="relative flex items-center gap-3 rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.5)] p-3 transition-colors hover:border-(--c-primary)/25 hover:bg-[rgba(11,29,46,0.72)]"
-      >
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ delay, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+      className="relative overflow-hidden rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-6 backdrop-blur-xl"
+    >
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-linear-to-r from-[var(--blue)] to-[var(--purple)]" />
+      <div className="flex items-center gap-4">
         <OrgBubble
           label={initials}
           gradient="from-[var(--blue)] to-[var(--purple)]"
           image={image}
-          size="sm"
+          size="md"
         />
-        <div className="min-w-0">
-          <div className="text-[9px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
-          <div className="mt-0.5 truncate text-xs font-semibold text-white">{name}</div>
+        <div>
+          <div className="text-[9px] font-medium uppercase tracking-[0.22em] text-(--dim)">
+            {role ?? "Manager"}
+          </div>
+          <div className="text-sm font-semibold text-white">{name}</div>
         </div>
-        {hasMsg && (
-          <div className="ml-auto shrink-0 h-1.5 w-1.5 rounded-full bg-(--c-primary)/60" />
-        )}
-      </motion.div>
-      {rect && hasMsg && <NodeTooltip message={message!} rect={rect} />}
-    </>
+      </div>
+      {message && (
+        <p className="mt-5 text-xs leading-6 text-(--light)">{message}</p>
+      )}
+    </motion.div>
   );
 }
 
@@ -197,6 +193,9 @@ export function StructureSection() {
 
     return Array.from(map.values());
   }, []);
+
+  // Engineering SM is Dmytro — first entry (Engineering Platforms, DBBS, Engineering Products)
+  const engineeringSm = smList[0];
 
   return (
     <section
@@ -408,7 +407,7 @@ export function StructureSection() {
 
                   return (
                     <div key={sm.name} className="flex flex-1 flex-col items-center">
-                      {/* Arch connector — first child gets top+right border, last gets top+left */}
+                      {/* Arch connector */}
                       <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
@@ -416,7 +415,7 @@ export function StructureSection() {
                         transition={{ delay: 0.18, duration: 0.3 }}
                         className={`h-8 w-full ${
                           isFirst && isLast
-                            ? "" // only child — no arch needed
+                            ? ""
                             : isFirst
                             ? "border-r border-t border-[rgba(0,180,216,0.28)]"
                             : isLast
@@ -436,14 +435,13 @@ export function StructureSection() {
                       </div>
 
                       {/* ── Level 2: Managers ─────────────────────────── */}
-                      <div className="w-full px-3 grid grid-cols-2 gap-2">
+                      <div className="w-full px-3 grid gap-3">
                         {sm.managers.map((mgr, j) => (
                           <ManagerCard
                             key={mgr.name}
                             name={mgr.name}
                             role={mgr.role}
                             image={mgr.image}
-                            message={mgr.message}
                             delay={0.5 + i * 0.08 + j * 0.06}
                           />
                         ))}
@@ -456,6 +454,53 @@ export function StructureSection() {
             </div>
           </div>
         </Reveal>
+
+        {/* ── Layer 3: Engineering & Platforms subsection ───────────────── */}
+        {engineeringSm && (
+          <Reveal className="mt-10">
+            <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
+              <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
+                Engineering &amp; Platforms
+              </div>
+
+              {/* SM row */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.4, delay: 0.1 }}
+                className="mt-6 flex items-center gap-4 rounded-2xl border border-(--c-primary)/20 bg-[rgba(0,180,216,0.06)] px-5 py-4"
+              >
+                <OrgBubble
+                  label={engineeringSm.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
+                  gradient="from-[var(--teal)] to-[var(--blue)]"
+                  image={engineeringSm.image}
+                  size="md"
+                />
+                <div>
+                  <div className="text-[9px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
+                    Senior Manager
+                  </div>
+                  <div className="mt-0.5 text-sm font-semibold text-white">{engineeringSm.name}</div>
+                </div>
+              </motion.div>
+
+              {/* Manager cards with messages */}
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {engineeringSm.managers.map((mgr, i) => (
+                  <EngineeringManagerCard
+                    key={mgr.name}
+                    name={mgr.name}
+                    role={mgr.role}
+                    image={mgr.image}
+                    message={mgr.message}
+                    delay={0.2 + i * 0.1}
+                  />
+                ))}
+              </div>
+            </div>
+          </Reveal>
+        )}
 
       </div>
     </section>

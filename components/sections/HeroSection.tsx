@@ -91,7 +91,7 @@ export function HeroSection() {
             <span className="block text-(--blue-lt)">technology engine.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-(--light) md:text-lg">
-            Group Digital Transformation Division is Republic Bank&apos;s technology-focused
+            Group Digital Technology Division is Republic Bank&apos;s technology-focused
             division, helping shape the systems, services, and digital experiences
             that support customers and teams across the region.
           </p>
