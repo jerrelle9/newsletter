@@ -82,31 +82,31 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Network,
 };
 
-/* ─── Timeline spine ──────────────────────────────────────────────────────── */
-function TimelineLine({
+/* ─── Shared animated spine ───────────────────────────────────────────────── */
+function TimelineSpine({
   containerRef,
+  className,
 }: {
   containerRef: React.RefObject<HTMLDivElement>;
+  className: string;
 }) {
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 80%", "end 20%"],
   });
-
   const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <div className="relative hidden lg:block">
-      {/* Static faint track */}
-      <div className="absolute inset-x-0 top-0 bottom-0 mx-auto w-px bg-[rgba(255,255,255,0.06)]" />
-      {/* Animated glowing fill */}
-      <motion.div
-        className="absolute inset-x-0 top-0 bottom-0 mx-auto w-px origin-top bg-[linear-gradient(180deg,var(--teal),var(--blue-lt),var(--purple))]"
-        style={{
-          scaleY,
-          boxShadow: "0 0 12px 2px rgba(0,180,216,0.45)",
-        }}
-      />
+    <div className={`pointer-events-none absolute ${className}`}>
+      <div className="relative h-full w-px">
+        {/* Faint track */}
+        <div className="absolute inset-0 bg-[rgba(255,255,255,0.06)]" />
+        {/* Animated glowing fill */}
+        <motion.div
+          className="absolute inset-0 origin-top bg-[linear-gradient(180deg,var(--teal),var(--blue-lt),var(--purple))]"
+          style={{ scaleY, boxShadow: "0 0 12px 2px rgba(0,180,216,0.45)" }}
+        />
+      </div>
     </div>
   );
 }
@@ -130,25 +130,43 @@ function TimelineNode({ color }: { color: string }) {
             ? { scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }
             : { scale: 1, opacity: 0 }
         }
-        transition={{
-          duration: 2.4,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 0.6,
-        }}
+        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
       />
       {/* Core dot */}
       <motion.div
         className="h-3 w-3 rounded-full"
-        style={{
-          background: color,
-          boxShadow: `0 0 18px 4px ${color}`,
-        }}
+        style={{ background: color, boxShadow: `0 0 18px 4px ${color}` }}
         initial={{ scale: 0, opacity: 0 }}
         animate={inView ? { scale: 1, opacity: 1 } : {}}
         transition={{ type: "spring", stiffness: 220, damping: 20, delay: 0.2 }}
       />
     </div>
+  );
+}
+
+/* ─── Horizontal bridge (card ↔ spine) ────────────────────────────────────── */
+function HorizontalBridge({
+  color,
+  direction,
+}: {
+  color: string;
+  direction: "left" | "right";
+}) {
+  return (
+    <motion.div
+      className="h-px w-10 shrink-0"
+      style={{
+        background:
+          direction === "left"
+            ? `linear-gradient(90deg, transparent, ${color})`
+            : `linear-gradient(90deg, ${color}, transparent)`,
+        originX: direction === "left" ? 1 : 0,
+      }}
+      initial={{ scaleX: 0, opacity: 0 }}
+      whileInView={{ scaleX: 1, opacity: 1 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+    />
   );
 }
 
@@ -163,9 +181,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
         className={`relative overflow-hidden rounded-4xl border ${cfg.borderClass} bg-[rgba(11,29,46,0.62)] p-6 backdrop-blur-xl shadow-[0_18px_60px_rgba(1,17,27,0.3)] transition-colors duration-200 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(11,29,46,0.78)]`}
       >
         {/* Top gradient accent bar */}
-        <div
-          className={`absolute inset-x-0 top-0 h-[2px] bg-linear-to-r ${cfg.barClass}`}
-        />
+        <div className={`absolute inset-x-0 top-0 h-[2px] bg-linear-to-r ${cfg.barClass}`} />
 
         {/* Header row */}
         <div className="flex items-start justify-between gap-3">
@@ -250,19 +266,38 @@ export function MilestoneSection() {
         {/* ── Timeline ────────────────────────────────────────────────────── */}
         <div className="relative mt-16">
 
-          {/* Mobile: single-column stack */}
-          <div className="flex flex-col gap-6 lg:hidden">
-            {milestones.map((ms) => (
-              <MilestoneCard key={ms.id} milestone={ms} />
-            ))}
+          {/* ── Mobile: left-rail ───────────────────────────────────────── */}
+          <div className="relative flex flex-col lg:hidden">
+            {/* Animated left spine */}
+            <TimelineSpine
+              containerRef={sectionRef}
+              className="inset-y-0 left-[11px]"
+            />
+
+            {milestones.map((ms) => {
+              const cfg = CATEGORY_CONFIG[ms.category];
+              return (
+                <div key={ms.id} className="relative flex gap-5 pb-8 last:pb-0">
+                  {/* Node on the left rail */}
+                  <div className="flex w-6 shrink-0 flex-col items-center pt-5">
+                    <TimelineNode color={cfg.nodeColor} />
+                  </div>
+                  {/* Card */}
+                  <div className="min-w-0 flex-1">
+                    <MilestoneCard milestone={ms} />
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
-          {/* Desktop: alternating two-column with central spine */}
+          {/* ── Desktop: alternating two-column with central spine ──────── */}
           <div className="hidden lg:block">
-            {/* The spine sits behind all rows */}
-            <div className="pointer-events-none absolute inset-y-0 left-1/2 -translate-x-1/2">
-              <TimelineLine containerRef={sectionRef} />
-            </div>
+            {/* Central vertical spine */}
+            <TimelineSpine
+              containerRef={sectionRef}
+              className="inset-y-0 left-1/2 -translate-x-1/2"
+            />
 
             <div className="flex flex-col">
               {milestones.map((ms, i) => {
@@ -270,10 +305,21 @@ export function MilestoneSection() {
                 const isLeft = i % 2 === 0;
 
                 return (
-                  <div key={ms.id} className="grid grid-cols-[1fr_64px_1fr] items-center py-5">
+                  <div
+                    key={ms.id}
+                    className="grid grid-cols-[1fr_64px_1fr] items-center py-5"
+                  >
                     {/* Left slot */}
-                    <div className="pr-8">
-                      {isLeft ? <MilestoneCard milestone={ms} /> : null}
+                    <div className="flex items-center">
+                      {isLeft ? (
+                        <>
+                          <div className="min-w-0 flex-1">
+                            <MilestoneCard milestone={ms} />
+                          </div>
+                          {/* Bridge from card to spine */}
+                          <HorizontalBridge color={cfg.nodeColor} direction="left" />
+                        </>
+                      ) : null}
                     </div>
 
                     {/* Central node */}
@@ -282,14 +328,23 @@ export function MilestoneSection() {
                     </div>
 
                     {/* Right slot */}
-                    <div className="pl-8">
-                      {!isLeft ? <MilestoneCard milestone={ms} /> : null}
+                    <div className="flex items-center">
+                      {!isLeft ? (
+                        <>
+                          {/* Bridge from spine to card */}
+                          <HorizontalBridge color={cfg.nodeColor} direction="right" />
+                          <div className="min-w-0 flex-1">
+                            <MilestoneCard milestone={ms} />
+                          </div>
+                        </>
+                      ) : null}
                     </div>
                   </div>
                 );
               })}
             </div>
           </div>
+
         </div>
       </div>
     </section>

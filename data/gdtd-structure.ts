@@ -1,4 +1,26 @@
-export const gdtdStructure = {
+interface Person {
+  name: string;
+  role?: string;
+  image?: string;
+  message?: string;
+}
+
+interface Team {
+  name: string;
+  initials: string;
+  color: string;
+  message?: string;
+  seniorManager: Person;
+  managers: Person[];
+  reports: Person[];
+}
+
+interface GdtdStructure {
+  leader: Person;
+  teams: Team[];
+}
+
+export const gdtdStructure: GdtdStructure = {
   leader: {
     name: "Marlon Persad",
     role: "General Manager",
@@ -54,7 +76,7 @@ export const gdtdStructure = {
     },
     {
       name: "Engineering Products",
-      initials: "DP",
+      initials: "EP",
       color: "from-[var(--blue)] to-[var(--purple)]",
       message: "Engineering Products leads teams that develop and improve the Bank’s systems, ensuring high‑quality delivery aligned with business objectives.",
       seniorManager: {

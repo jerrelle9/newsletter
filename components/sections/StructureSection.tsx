@@ -1,17 +1,16 @@
+"use client";
 
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { OrgBubble } from "@/components/org/OrgBubble";
-import { OrgBox } from "@/components/org/OrgBox";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { gdtdStructure } from "@/data/gdtd-structure";
 import { orgOverview } from "@/data/org-overview";
 
-/* ─── Shared portal tooltip ───────────────────────────────────────────────── */
+/* ─── Tooltip portal ──────────────────────────────────────────────────────── */
 function NodeTooltip({ message, rect }: { message: string; rect: DOMRect }) {
   return createPortal(
     <div
@@ -31,172 +30,27 @@ function NodeTooltip({ message, rect }: { message: string; rect: DOMRect }) {
   );
 }
 
-/* ─── Command chain node ──────────────────────────────────────────────────── */
-function ChainNode({
-  name,
-  role,
-  image,
-  initials,
-  gradient,
-  tag,
-  delay,
-  message,
-}: {
-  name: string;
-  role?: string;
-  image?: string;
-  initials: string;
-  gradient: string;
-  tag?: string;
-  delay: number;
-  message?: string;
-}) {
-  const nodeRef = useRef<HTMLDivElement>(null);
-  const [rect, setRect] = useState<DOMRect | null>(null);
-  const hasMessage = !!message;
-
-  return (
-    <>
-      <motion.div
-        ref={nodeRef}
-        initial={{ opacity: 0, scale: 0.65, y: 14 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay, duration: 0.5, type: "spring", stiffness: 220, damping: 20 }}
-        className="flex flex-col items-center text-center"
-        onMouseEnter={() => { if (hasMessage && nodeRef.current) setRect(nodeRef.current.getBoundingClientRect()); }}
-        onMouseLeave={() => setRect(null)}
-      >
-        {/* Pulse ring */}
-        <div className="relative">
-          <motion.div
-            initial={{ opacity: 0.6, scale: 0.85 }}
-            animate={{ opacity: 0, scale: 1.7 }}
-            transition={{ delay: delay + 0.05, duration: 0.9, ease: "easeOut" }}
-            className={`absolute inset-0 rounded-full bg-linear-to-br ${gradient}`}
-          />
-          <OrgBubble label={initials} gradient={gradient} image={image} size="lg" />
-          {/* Dot indicator */}
-          {hasMessage && (
-            <div className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--navy)] bg-(--c-primary)" />
-          )}
-        </div>
-
-        {/* Role tag */}
-        {tag && (
-          <motion.div
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: delay + 0.18, duration: 0.28 }}
-            className="mt-3 rounded-full border border-(--border) bg-[rgba(11,29,46,0.7)] px-2.5 py-0.5 text-[9px] font-medium uppercase tracking-[0.22em] text-(--dim)"
-          >
-            {tag}
-          </motion.div>
-        )}
-
-        {/* Name */}
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: delay + 0.24, duration: 0.28 }}
-          className="mt-1.5 text-[13px] font-semibold leading-tight text-white"
-        >
-          {name}
-        </motion.div>
-
-        {/* Role text */}
-        {role && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: delay + 0.32, duration: 0.28 }}
-            className="mt-1 max-w-[130px] text-[10px] leading-[1.4] text-(--light)"
-          >
-            {role}
-          </motion.div>
-        )}
-      </motion.div>
-
-      {rect && hasMessage && <NodeTooltip message={message!} rect={rect} />}
-    </>
-  );
-}
-
-
-
-/* ─── Report card with side tooltip ──────────────────────────────────────── */
-type Report = { name: string; role: string; image?: string; message?: string };
-
-function ReportCard({
-  report,
-  index,
-  gradient,
-}: {
-  report: Report;
-  index: number;
-  gradient: string;
-}) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [rect, setRect] = useState<DOMRect | null>(null);
-  const hasMessage = !!report.message;
-
-  const initials = report.name
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .slice(0, 3);
-
-  return (
-    <>
-      <motion.div
-        ref={cardRef}
-        initial={{ opacity: 0, y: 18, scale: 0.96 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{
-          delay: 1.14 + index * 0.06,
-          duration: 0.35,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        onMouseEnter={() => { if (hasMessage && cardRef.current) setRect(cardRef.current.getBoundingClientRect()); }}
-        onMouseLeave={() => setRect(null)}
-        className="rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-4 transition-colors duration-200 hover:border-(--c-primary)/25 hover:bg-[rgba(11,29,46,0.72)]"
-      >
-        <div className="flex items-center gap-3">
-          <OrgBubble label={initials} gradient={gradient} image={report.image} size="md" />
-          <div className="min-w-0">
-            <div className="text-[10px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-              {String(index + 1).padStart(2, "0")}
-            </div>
-            <div className="mt-0.5 text-sm font-semibold text-white">{report.name}</div>
-            <div className="mt-0.5 text-xs leading-5 text-(--light)">{report.role}</div>
-          </div>
-          {hasMessage && (
-            <div className="ml-auto shrink-0 h-1.5 w-1.5 rounded-full bg-(--c-primary)/60" />
-          )}
-        </div>
-      </motion.div>
-
-      {rect && hasMessage && <NodeTooltip message={report.message!} rect={rect} />}
-    </>
-  );
-}
-
-/* ─── GM node ────────────────────────────────────────────────────────────── */
+/* ─── GM node ─────────────────────────────────────────────────────────────── */
 function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
-  const nodeRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [rect, setRect] = useState<DOMRect | null>(null);
-  const hasMessage = !!leader.message;
+  const hasMsg = !!leader.message;
 
   return (
     <>
-      <div
-        ref={nodeRef}
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, scale: 0.8, y: 10 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.5 }}
+        transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 22 }}
         className="flex flex-col items-center text-center"
-        onMouseEnter={() => { if (hasMessage && nodeRef.current) setRect(nodeRef.current.getBoundingClientRect()); }}
+        onMouseEnter={() => { if (hasMsg && ref.current) setRect(ref.current.getBoundingClientRect()); }}
         onMouseLeave={() => setRect(null)}
       >
         <div className="relative">
           <OrgBubble label="GM" size="lg" image={leader.image} />
-          {hasMessage && (
+          {hasMsg && (
             <div className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--navy)] bg-(--c-primary)" />
           )}
         </div>
@@ -205,25 +59,144 @@ function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
         </div>
         <div className="mt-1 text-xl font-semibold text-white">{leader.name}</div>
         <div className="mt-1 text-sm text-(--dim)">Group Digital Technology Division</div>
-        <div className="mt-2 max-w-2xl text-sm leading-7 text-(--light)">
-          Select a team below to see its senior manager, manager, and direct reporting line.
+      </motion.div>
+      {rect && hasMsg && <NodeTooltip message={leader.message!} rect={rect} />}
+    </>
+  );
+}
+
+/* ─── Senior manager card ─────────────────────────────────────────────────── */
+function SmCard({
+  name,
+  image,
+  delay,
+}: {
+  name: string;
+  image?: string;
+  delay: number;
+}) {
+  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.4 }}
+      transition={{ delay, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+      className="relative overflow-hidden rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-5 shadow-[0_12px_40px_rgba(1,17,27,0.35)] backdrop-blur-xl"
+    >
+      {/* Top accent */}
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-linear-to-r from-[var(--teal)] to-[var(--blue)]" />
+      <div className="flex flex-col items-center text-center gap-3">
+        <OrgBubble
+          label={initials}
+          gradient="from-[var(--teal)] to-[var(--blue)]"
+          image={image}
+          size="md"
+        />
+        <div>
+          <div className="text-[9px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
+            Senior Manager
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">{name}</div>
         </div>
       </div>
+    </motion.div>
+  );
+}
 
-      {rect && hasMessage && <NodeTooltip message={leader.message!} rect={rect} />}
+/* ─── Manager card ────────────────────────────────────────────────────────── */
+function ManagerCard({
+  name,
+  role,
+  image,
+  message,
+  delay,
+}: {
+  name: string;
+  role?: string;
+  image?: string;
+  message?: string;
+  delay: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [rect, setRect] = useState<DOMRect | null>(null);
+  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+  const hasMsg = !!message;
+
+  return (
+    <>
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 14, scale: 0.95 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ delay, duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+        onMouseEnter={() => { if (hasMsg && ref.current) setRect(ref.current.getBoundingClientRect()); }}
+        onMouseLeave={() => setRect(null)}
+        className="relative flex items-center gap-3 rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.5)] p-3 transition-colors hover:border-(--c-primary)/25 hover:bg-[rgba(11,29,46,0.72)]"
+      >
+        <OrgBubble
+          label={initials}
+          gradient="from-[var(--blue)] to-[var(--purple)]"
+          image={image}
+          size="sm"
+        />
+        <div className="min-w-0">
+          <div className="text-[9px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
+          <div className="mt-0.5 truncate text-xs font-semibold text-white">{name}</div>
+        </div>
+        {hasMsg && (
+          <div className="ml-auto shrink-0 h-1.5 w-1.5 rounded-full bg-(--c-primary)/60" />
+        )}
+      </motion.div>
+      {rect && hasMsg && <NodeTooltip message={message!} rect={rect} />}
     </>
+  );
+}
+
+/* ─── Animated vertical drop line ────────────────────────────────────────── */
+function DropLine({ delay, height = "h-10" }: { delay: number; height?: string }) {
+  return (
+    <motion.div
+      initial={{ scaleY: 0, opacity: 0 }}
+      whileInView={{ scaleY: 1, opacity: 1 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ delay, duration: 0.35, ease: "easeOut" }}
+      style={{ originY: 0 }}
+      className={`${height} w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.7),rgba(0,180,216,0.2))]`}
+    />
   );
 }
 
 /* ─── Main section ────────────────────────────────────────────────────────── */
 export function StructureSection() {
-  const descriptors = ["Platforms", "Journeys", "Products"];
+  // Deduplicate SMs across teams, collecting all their managers
+  const smList = useMemo(() => {
+    const map = new Map<
+      string,
+      {
+        name: string;
+        image?: string;
+        managers: Array<{ name: string; role?: string; image?: string; message?: string }>;
+      }
+    >();
 
-  const reportingTeams = gdtdStructure.teams;
-  const [activeTeamName, setActiveTeamName] = useState(reportingTeams[0]?.name ?? "");
+    gdtdStructure.teams.forEach((team) => {
+      const smName = team.seniorManager.name;
+      if (!map.has(smName)) {
+        map.set(smName, { name: smName, image: team.seniorManager.image, managers: [] });
+      }
+      const sm = map.get(smName)!;
+      team.managers.forEach((mgr) => {
+        if (!sm.managers.find((m) => m.name === mgr.name)) {
+          sm.managers.push({ name: mgr.name, role: mgr.role, image: mgr.image, message: mgr.message });
+        }
+      });
+    });
 
-  const activeTeam =
-    reportingTeams.find((team) => team.name === activeTeamName) ?? reportingTeams[0];
+    return Array.from(map.values());
+  }, []);
 
   return (
     <section
@@ -234,6 +207,8 @@ export function StructureSection() {
       <SectionNumber number="04" />
 
       <div className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
+
+        {/* Section header */}
         <Reveal className="mx-auto max-w-3xl text-center">
           <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Our structure
@@ -247,288 +222,241 @@ export function StructureSection() {
           </p>
         </Reveal>
 
-        {/* Layer 1: Org placement */}
+        {/* ── Layer 1: Org placement ─────────────────────────────────────── */}
         <Reveal className="mt-16">
           <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
             <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
               Organisational placement
             </div>
+
             <div className="mt-8 flex flex-col items-center">
-              <OrgBox code={orgOverview.top.code} title={orgOverview.top.title} active />
-              <div className="h-14 w-px bg-[linear-gradient(180deg,rgba(255,255,255,0.8),rgba(255,255,255,0.2))]" />
-              <div className="grid gap-8 md:grid-cols-3">
-                {orgOverview.divisions.map((division) => (
-                  <OrgBox
-                    key={division.code}
-                    code={division.code}
-                    title={division.title}
-                    active={division.highlight}
+
+              {/* ── CIDTO — prominent top node ──────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, y: -14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: 0.1 }}
+                className="relative w-full overflow-hidden rounded-3xl border border-white/20 bg-[rgba(11,29,46,0.95)] px-10 py-6 text-center shadow-[0_20px_60px_rgba(1,17,27,0.5)]"
+              >
+                {/* Subtle inner glow */}
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.06),transparent_60%)]" />
+                <div className="relative">
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-white/50">
+                    {orgOverview.top.title}
+                  </span>
+                  <div className="mt-2 text-4xl font-black tracking-[-0.02em] text-white">
+                    {orgOverview.top.code}
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Drop from CIDTO to horizontal bar */}
+              <motion.div
+                initial={{ scaleY: 0, opacity: 0 }}
+                whileInView={{ scaleY: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: 0.35, ease: "easeOut" }}
+                style={{ originY: 0 }}
+                className="h-10 w-px bg-[linear-gradient(180deg,rgba(255,255,255,0.35),rgba(255,255,255,0.15))]"
+              />
+
+              {/* ── Division row ─────────────────────────────────────────── */}
+              <div className="relative w-full">
+                {/* Horizontal connector spanning all three columns */}
+                <motion.div
+                  initial={{ scaleX: 0, opacity: 0 }}
+                  whileInView={{ scaleX: 1, opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.42, ease: "easeOut" }}
+                  style={{ originX: 0.5 }}
+                  className="absolute top-0 left-[16.67%] right-[16.67%] h-px bg-[rgba(255,255,255,0.18)]"
+                />
+
+              <div className="flex w-full items-start">
+
+                {/* GTSD */}
+                <div className="flex flex-1 flex-col items-center">
+                  {/* vertical drop from horizontal bar */}
+                  <motion.div
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    whileInView={{ scaleY: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.25, delay: 0.62, ease: "easeOut" }}
+                    style={{ originY: 0 }}
+                    className="h-10 w-px bg-[rgba(255,255,255,0.18)]"
                   />
-                ))}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.38, delay: 0.72 }}
+                    className="w-full rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.6)] px-6 py-5 text-center"
+                  >
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-(--dim)">Division</span>
+                    <div className="mt-1.5 text-2xl font-bold text-white">{orgOverview.divisions[0].code}</div>
+                    <div className="mt-1 text-[10px] leading-4 text-(--dim)">{orgOverview.divisions[0].title}</div>
+                  </motion.div>
+                </div>
+
+                {/* GDTD */}
+                <div className="flex flex-1 flex-col items-center">
+                  <motion.div
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    whileInView={{ scaleY: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: 0.54, ease: "easeOut" }}
+                    style={{ originY: 0 }}
+                    className="h-10 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.8),rgba(0,180,216,0.4))]"
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.38, delay: 0.58 }}
+                    className="w-full px-4"
+                  >
+                    <motion.div
+                      animate={{
+                        boxShadow: [
+                          "0 0 18px 2px rgba(0,180,216,0.3)",
+                          "0 0 48px 10px rgba(0,180,216,0.75)",
+                          "0 0 18px 2px rgba(0,180,216,0.3)",
+                        ],
+                        borderColor: [
+                          "rgba(0,180,216,0.5)",
+                          "rgba(0,180,216,1)",
+                          "rgba(0,180,216,0.5)",
+                        ],
+                      }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      className="relative rounded-2xl border bg-[var(--navy)] px-6 py-5 text-center"
+                    >
+                      <motion.span
+                        aria-hidden="true"
+                        className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-[var(--blue-lt)]"
+                        animate={{ opacity: [0.5, 0, 0.5], scale: [1, 1.12, 1] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      />
+                      <span className="relative text-[10px] uppercase tracking-[0.22em] text-(--c-primary)">
+                        That&apos;s us
+                      </span>
+                      <div className="relative mt-1.5 text-2xl font-bold text-(--c-primary)">
+                        {orgOverview.divisions[1].code}
+                      </div>
+                      <div className="relative mt-1 text-[10px] leading-4 text-(--c-primary)/60">
+                        {orgOverview.divisions[1].title}
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                </div>
+
+                {/* DGMU */}
+                <div className="flex flex-1 flex-col items-center">
+                  {/* vertical drop from horizontal bar */}
+                  <motion.div
+                    initial={{ scaleY: 0, opacity: 0 }}
+                    whileInView={{ scaleY: 1, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.25, delay: 0.62, ease: "easeOut" }}
+                    style={{ originY: 0 }}
+                    className="h-10 w-px bg-[rgba(255,255,255,0.18)]"
+                  />
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.38, delay: 0.82 }}
+                    className="w-full rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.6)] px-6 py-5 text-center"
+                  >
+                    <span className="text-[10px] uppercase tracking-[0.22em] text-(--dim)">Division</span>
+                    <div className="mt-1.5 text-2xl font-bold text-white">{orgOverview.divisions[2].code}</div>
+                    <div className="mt-1 text-[10px] leading-4 text-(--dim)">{orgOverview.divisions[2].title}</div>
+                  </motion.div>
+                </div>
+
               </div>
-              <div className="mt-8 rounded-full border border-(--c-primary)/20 bg-(--c-primary)/10 px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
-                GDTD is the in-scope division for this site
-              </div>
+              </div>{/* end relative wrapper */}
             </div>
           </div>
         </Reveal>
 
-        {/* Layer 2: Internal reporting structure */}
+        {/* ── Layer 2: Reporting tree ────────────────────────────────────── */}
         <Reveal className="mt-10">
           <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
             <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
               GDTD reporting structure
             </div>
 
-            {/* GM */}
-            <div className="mt-8 mx-auto max-w-5xl">
-              <GmNode leader={gdtdStructure.leader} />
-              <div className="mt-8 flex justify-center">
-                <div className="h-16 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.85),rgba(0,180,216,0.2))]" />
+            <div className="mt-8">
+
+              {/* ── Level 0: GM ───────────────────────────────────────── */}
+              <div className="flex flex-col items-center">
+                <GmNode leader={gdtdStructure.leader} />
+
+                {/* Drop to SM row */}
+                <div className="mt-6 flex justify-center">
+                  <DropLine delay={0.1} height="h-12" />
+                </div>
               </div>
 
-              {/* Team selector */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {reportingTeams.map((team, index) => {
-                  const isActive = team.name === activeTeam?.name;
-                  const isLoneInRow =
-                    index === reportingTeams.length - 1 &&
-                    reportingTeams.length % 3 === 1;
+              {/* ── Level 1: Senior Managers ──────────────────────────── */}
+              <div className="flex items-start">
+                {smList.map((sm, i) => {
+                  const isFirst = i === 0;
+                  const isLast = i === smList.length - 1;
+
                   return (
-                    <button
-                      key={team.name}
-                      type="button"
-                      onClick={() => setActiveTeamName(team.name)}
-                      className={`relative overflow-hidden rounded-4xl border p-5 text-left transition duration-200 ${
-                        isLoneInRow ? "lg:col-start-2" : ""
-                      } ${
-                        isActive
-                          ? "border-(--c-primary)/30 bg-[rgba(255,255,255,0.06)] shadow-[0_18px_40px_rgba(0,180,216,0.12)]"
-                          : "border-(--border) bg-[rgba(255,255,255,0.03)] hover:border-(--c-primary)/18 hover:bg-[rgba(255,255,255,0.05)]"
-                      }`}
-                    >
-                      {/* Active glow bar */}
-                      {isActive && (
-                        <motion.div
-                          layoutId="team-active-bar"
-                          className={`absolute inset-x-0 top-0 h-[2px] bg-linear-to-r ${team.color}`}
-                          transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <OrgBubble label={team.initials} gradient={team.color} />
-                          <div>
-                            <div className="font-semibold text-white">{team.name}</div>
-                            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-                              {/* {descriptors[index]} */}
-                            </div>
-                          </div>
-                        </div>
-                        <ChevronRight
-                          className={`h-5 w-5 shrink-0 text-(--c-primary) transition-transform ${
-                            isActive ? "rotate-90" : "rotate-0"
-                          }`}
-                        />
+                    <div key={sm.name} className="flex flex-1 flex-col items-center">
+                      {/* Arch connector — first child gets top+right border, last gets top+left */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        whileInView={{ opacity: 1 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ delay: 0.18, duration: 0.3 }}
+                        className={`h-8 w-full ${
+                          isFirst && isLast
+                            ? "" // only child — no arch needed
+                            : isFirst
+                            ? "border-r border-t border-[rgba(0,180,216,0.28)]"
+                            : isLast
+                            ? "border-l border-t border-[rgba(0,180,216,0.28)]"
+                            : "border-t border-[rgba(0,180,216,0.28)]"
+                        }`}
+                      />
+
+                      {/* SM card */}
+                      <div className="w-full px-3">
+                        <SmCard name={sm.name} image={sm.image} delay={0.26 + i * 0.08} />
                       </div>
-                      {team.message && (
-                        <div className="mt-4 text-sm leading-7 text-(--light)">
-                          {team.message}
-                        </div>
-                      )}
-                    </button>
+
+                      {/* Drop to manager row */}
+                      <div className="mt-0 flex flex-col items-center">
+                        <DropLine delay={0.4 + i * 0.08} height="h-8" />
+                      </div>
+
+                      {/* ── Level 2: Managers ─────────────────────────── */}
+                      <div className="w-full px-3 grid grid-cols-2 gap-2">
+                        {sm.managers.map((mgr, j) => (
+                          <ManagerCard
+                            key={mgr.name}
+                            name={mgr.name}
+                            role={mgr.role}
+                            image={mgr.image}
+                            message={mgr.message}
+                            delay={0.5 + i * 0.08 + j * 0.06}
+                          />
+                        ))}
+                      </div>
+                    </div>
                   );
                 })}
               </div>
 
-              {/* ── Expanded panel ─────────────────────────────────────────── */}
-              <AnimatePresence mode="wait">
-                {activeTeam && (
-                  <motion.div
-                    key={activeTeam.name}
-                    initial={{ opacity: 0, y: 32, filter: "blur(10px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -16, filter: "blur(6px)", scale: 0.98 }}
-                    transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-8 overflow-hidden rounded-4xl border border-(--c-primary)/20 bg-[rgba(11,29,46,0.62)] shadow-[0_30px_80px_rgba(1,17,27,0.5)] backdrop-blur-xl"
-                  >
-                    {/* Colour gradient top bar */}
-                    <motion.div
-                      initial={{ scaleX: 0 }}
-                      animate={{ scaleX: 1 }}
-                      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                      style={{ originX: 0 }}
-                      className={`h-[3px] w-full bg-linear-to-r ${activeTeam.color}`}
-                    />
-
-                    <div className="p-6 md:p-8">
-                      {/* Header row */}
-                      <motion.div
-                        initial={{ opacity: 0, x: -14 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.12, duration: 0.32, ease: "easeOut" }}
-                        className="flex flex-wrap items-start justify-between gap-3"
-                      >
-                        <div>
-                          <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
-                            Command chain
-                          </div>
-                          <h3 className="mt-1.5 text-2xl font-bold tracking-[-0.02em] text-white">
-                            {activeTeam.name}
-                          </h3>
-                        </div>
-                        {/* <div className="rounded-full border border-(--border) bg-[rgba(11,29,46,0.7)] px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.26em] text-(--light)">
-                          {activeTeam.managers.length} manager{activeTeam.managers.length === 1 ? "" : "s"}
-                        </div> */}
-                      </motion.div>
-
-                      {/* ── Command chain ────────────────────────────────────── */}
-                      <div className="mt-8 flex flex-col items-center">
-                        {/* Drop line: header → Senior Manager */}
-                        <motion.div
-                          initial={{ opacity: 0, scaleY: 0 }}
-                          animate={{ opacity: 1, scaleY: 1 }}
-                          transition={{ delay: 0.12, duration: 0.4, ease: "easeOut" }}
-                          style={{ originY: 0 }}
-                          className="flex flex-col items-center gap-0"
-                        >
-                          <motion.div
-                            initial={{ opacity: 0, scaleX: 0 }}
-                            animate={{ opacity: 1, scaleX: 1 }}
-                            transition={{ delay: 0.18, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            style={{ originX: 0.5 }}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,transparent,rgba(0,180,216,0.4))]" />
-                            <div className="rounded-full border border-(--c-primary)/20 bg-(--c-primary)/10 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.3em] text-(--c-primary)/80">
-                              Senior Manager
-                            </div>
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,rgba(0,180,216,0.4),transparent)]" />
-                          </motion.div>
-                          <div className="h-6 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.25),transparent)]" />
-                        </motion.div>
-
-                        {/* Senior manager node */}
-                        <ChainNode
-                          name={activeTeam.seniorManager.name}
-                          role={activeTeam.seniorManager.role}
-                          image={activeTeam.seniorManager.image}
-                          initials={activeTeam.seniorManager.name
-                            .split(" ")
-                            .map((p) => p[0])
-                            .join("")
-                            .slice(0, 2)}
-                          gradient={activeTeam.color}
-                          delay={0.18}
-                          message={activeTeam.seniorManager.message}
-                        />
-
-                        {/* Drop line: SM → Manager */}
-                        <motion.div
-                          initial={{ opacity: 0, scaleY: 0 }}
-                          animate={{ opacity: 1, scaleY: 1 }}
-                          transition={{ delay: 0.38, duration: 0.4, ease: "easeOut" }}
-                          style={{ originY: 0 }}
-                          className="mt-6 flex flex-col items-center gap-0"
-                        >
-                          <div className="h-10 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.7),rgba(0,180,216,0.25))]" />
-                          <motion.div
-                            initial={{ opacity: 0, scaleX: 0 }}
-                            animate={{ opacity: 1, scaleX: 1 }}
-                            transition={{ delay: 0.46, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            style={{ originX: 0.5 }}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,transparent,rgba(0,180,216,0.4))]" />
-                            <div className="rounded-full border border-(--c-primary)/20 bg-(--c-primary)/10 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.3em] text-(--c-primary)/80">
-                              {activeTeam.managers.length === 1 ? "Manager" : "Managers"}
-                            </div>
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,rgba(0,180,216,0.4),transparent)]" />
-                          </motion.div>
-                          <div className="h-6 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.25),transparent)]" />
-                        </motion.div>
-
-                        {/* Manager(s) — max 3 per row, single item centred */}
-                        <div className={`grid gap-6 ${
-                          activeTeam.managers.length === 1
-                            ? "grid-cols-1 place-items-center"
-                            : activeTeam.managers.length === 2
-                            ? "grid-cols-2"
-                            : "grid-cols-3"
-                        }`}>
-                          {activeTeam.managers.map((mgr, i) => (
-                            <ChainNode
-                              key={mgr.name}
-                              name={mgr.name}
-                              // role={"role" in mgr && mgr.role !== "Manager" ? mgr.role : undefined}
-                              image={mgr.image}
-                              initials={mgr.name
-                                .split(" ")
-                                .map((p) => p[0])
-                                .join("")
-                                .slice(0, 2)}
-                              gradient={activeTeam.color}
-                              tag={"role" in mgr && mgr.role !== "Manager" ? mgr.role : undefined}
-                              delay={0.5 + i * 0.08}
-                              message={"message" in mgr ? mgr.message : undefined}
-                            />
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* ── Drop line to reports ──────────────────────────── */}
-                      {activeTeam.reports.length > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, scaleY: 0 }}
-                          animate={{ opacity: 1, scaleY: 1 }}
-                          transition={{ delay: 1.0, duration: 0.4, ease: "easeOut" }}
-                          style={{ originY: 0 }}
-                          className="mt-6 flex flex-col items-center gap-0"
-                        >
-                          <div className="h-10 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.7),rgba(0,180,216,0.25))]" />
-                          <motion.div
-                            initial={{ opacity: 0, scaleX: 0 }}
-                            animate={{ opacity: 1, scaleX: 1 }}
-                            transition={{ delay: 1.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                            style={{ originX: 0.5 }}
-                            className="flex items-center gap-3"
-                          >
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,transparent,rgba(0,180,216,0.4))]" />
-                            <div className="rounded-full border border-(--c-primary)/20 bg-(--c-primary)/10 px-3 py-1 text-[9px] font-medium uppercase tracking-[0.3em] text-(--c-primary)/80">
-                              Team
-                            </div>
-                            <div className="h-px w-16 bg-[linear-gradient(90deg,rgba(0,180,216,0.4),transparent)]" />
-                          </motion.div>
-                          <div className="h-6 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.25),transparent)]" />
-                        </motion.div>
-                      )}
-
-                      {/* ── Direct reports grid ───────────────────────────── */}
-                      {activeTeam.reports.length > 0 && (
-                        <div className="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-3">
-                          {activeTeam.reports.map((report, index) => {
-                            const loneInRow =
-                              activeTeam.reports.length % 3 === 1 &&
-                              index === activeTeam.reports.length - 1;
-                            return (
-                              <div key={report.name} className={loneInRow ? "sm:col-start-2" : ""}>
-                                <ReportCard
-                                  report={report}
-                                  index={index}
-                                  gradient={activeTeam.color}
-                                />
-                              </div>
-                            );
-                          })}
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
             </div>
           </div>
         </Reveal>
+
       </div>
     </section>
   );

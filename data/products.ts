@@ -19,13 +19,13 @@ export const products = [
     icon: Sparkles,
   },
   {
-    title: "Core Integrations",
-    body: "Expose and orchestrate core services across channels, systems, and operational teams.",
+    title: "VeriBranch",
+    body: "The Veri Branch Architecture is a hybrid cloud solution designed to enable modern, cloud-hosted banking applications (VeriBranch) to securely interact with existing on-premises banking systems. The architecture follows layered approach (UI, API, Business) including secure integration components (VeriLink, App Gateway, Express Route), centralized business logic, and rule management, to ensure both flexibility and compliance with banking standards.",
     icon: Network,
   },
   {
-    title: "Enterprise Platforms",
-    body: "Provide secure cloud and shared services that enable product teams to move quickly with control.",
+    title: "Grafana",
+    body: " Grafana transforms raw monitoring data into actionable insights, helping us quickly understand system health and business performance across our hybrid cloud environment.",
     icon: Building2,
   },
   {
