@@ -1,4 +1,3 @@
-"use client";
 
 import { useMemo, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
@@ -92,13 +91,13 @@ export function HeroSection() {
             <span className="block text-(--blue-lt)">technology engine.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-(--light) md:text-lg">
-            Group Digital Technology Division is Republic Bank&apos;s technology-focused
+            Group Digital Transformation Division is Republic Bank&apos;s technology-focused
             division, helping shape the systems, services, and digital experiences
             that support customers and teams across the region.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button className="px-6 py-3" onClick={() => handleJump("#section-5")}>
-              Explore GTD
+              Explore GDTD
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
             <Button
@@ -120,10 +119,10 @@ export function HeroSection() {
                   className="rounded-3xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-4 backdrop-blur-xl"
                 >
                   <div className="flex items-center gap-3 text-(--c-primary)">
-                    <div className="rounded-2xl border border-(--c-primary)/18 bg-(--c-primary)/10 p-2.5">
+                    <div className="shrink-0 rounded-2xl border border-(--c-primary)/18 bg-(--c-primary)/10 p-2.5">
                       <Icon className="h-4 w-4" />
                     </div>
-                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
+                    <div className="min-w-0 text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                       {item.label}
                     </div>
                   </div>

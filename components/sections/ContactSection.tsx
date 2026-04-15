@@ -1,4 +1,5 @@
 import { ArrowRight, Mail, MessageSquare, PhoneCall } from "lucide-react";
+import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -24,10 +25,11 @@ export function ContactSection() {
 
   return (
     <section
-      id="section-6"
+      id="section-7"
       className="relative min-h-screen bg-[radial-gradient(circle_at_bottom,rgba(0,180,216,0.14),transparent_35%),linear-gradient(180deg,var(--navy)_0%,#00111b_100%)]"
     >
-      <SectionNumber number="06" />
+      <GalaxyBackground />
+      <SectionNumber number="07" />
 
       <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-16">
         <Reveal>

@@ -1,5 +1,6 @@
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
+import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 
 export function GmNoteSection() {
   const values = ["Clarity", "Execution", "Trust", "Regional scale"];
@@ -9,6 +10,7 @@ export function GmNoteSection() {
       id="section-3"
       className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_20%_24%,rgba(0,180,216,0.12),transparent_20%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
     >
+      <GalaxyBackground />
       <SectionNumber number="03" />
 
       <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
@@ -19,13 +21,18 @@ export function GmNoteSection() {
               A note from our GM
             </div>
 
-            <div className="mt-8 text-3xl font-light leading-tight text-(--white) md:text-3xl md:leading-[1.08]">
-              <span className="text-4xl font-black text-(--c-primary) md:text-5xl">G</span>roup
-              <span className="ml-3 text-4xl font-black text-(--c-primary) md:text-5xl">D</span>igital
-              <span className="ml-3 mr-[-9] text-4xl font-black text-(--c-primary) md:text-5xl">T</span>echnology
-              <span className="ml-3 text-4xl font-black text-(--c-primary) md:text-5xl">D</span>ivision
-              exists to help Republic move faster, stay dependable, and keep improving, by
-              bringing clear technology leadership and customer focus into one division.
+            <div className="mt-8">
+              <div className="flex flex-wrap gap-x-3 gap-y-1 text-3xl font-light leading-tight text-white md:text-3xl md:leading-[1.08]">
+                <span><span className="text-4xl font-black text-(--c-primary) md:text-5xl">G</span>roup</span>
+                <span><span className="text-4xl font-black text-(--c-primary) md:text-5xl">D</span>igital</span>
+                <span><span className="text-4xl font-black text-(--c-primary) md:text-5xl">T</span>echnology</span>
+                <span><span className="text-4xl font-black text-(--c-primary) md:text-5xl">D</span>ivision</span>
+                <p className="mt-4 text-xl font-light leading-8 text-(--light)">
+                  exists to help Republic move faster, stay dependable, and keep improving, by
+                  bringing clear technology leadership and customer focus into one division.
+                </p>
+              </div>
+              
             </div>
 
             <p className="mt-8 max-w-3xl text-base leading-8 text-(--light)">

@@ -1,7 +1,7 @@
-"use client";
 
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -26,6 +26,7 @@ export function CapabilitiesSection() {
       id="section-5"
       className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_16%_18%,rgba(0,180,216,0.1),transparent_18%),linear-gradient(180deg,var(--surface)_0%,var(--surface2)_100%)]"
     >
+      <GalaxyBackground />
       <SectionNumber number="05" />
 
       <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-12 px-6 py-24 md:px-10 lg:px-16">
