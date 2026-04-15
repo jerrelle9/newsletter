@@ -53,7 +53,7 @@
 html {
   scroll-behavior: smooth;
   color-scheme: dark;
-  scroll-snap-type: y mandatory;
+  /* scroll-snap-type: y mandatory; */
   scroll-padding-top: 0;
   scrollbar-width: thin;
   scrollbar-color: var(--blue-lt) #031726;
@@ -123,8 +123,8 @@ p {
 }
 
 main > section {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  /* scroll-snap-align: start; */
+  /* scroll-snap-stop: always; */
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -62,7 +62,7 @@ export function WhoWeAreSection() {
           </h2>
           <p className="mt-6 text-base leading-8 text-(--light)">
             The Group Digital Technology Division was established as one of the pillars of the
-            RFHL Group&apos;s Digital Transformation journey — formed to translate strategic ambition
+            RFHL Group&apos;s Digital Transformation journey, formed to translate strategic ambition
             into tangible, technology-enabled outcomes.
           </p>
         </Reveal>

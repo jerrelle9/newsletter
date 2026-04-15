@@ -2,7 +2,7 @@ export const gdtdStructure = {
   leader: {
     name: "Marlon Persad",
     role: "General Manager",
-    image: "/staff/marlonpersad.png",
+    image: "/staff/marlonpersad.jfif",
     message: "",
   },
   teams: [
@@ -19,23 +19,25 @@ export const gdtdStructure = {
       },
       managers: [
         { name: "Adrian Lee", image: "staff/adrianlee2.png", message: "Adrian provides leadership for the Technology Platforms Engineering teams, managing DevOps and DevSecOps functions aligned with organizational strategy. His responsibilities include cloud infrastructure management, automated delivery pipelines, and integrated security controls across the development lifecycle." },
-        // { name: "Adrian Lee", image: "", message: "" },
+       
       ],
       reports: [
-        { name: "Serhii Sypalo", role: "Engineering Manager / AWS DevOps Technical Lead", image: "/staff/serhii-sypalo.jpg", message: "" },
+        { name: "Serhii Sypalo", role: "Engineering Manager / AWS DevOps Technical Lead", image: "/staff/serhiisypalo.jfif", message: "" },
         { name: "Oleksandr Soshenko", role: "Azure Devops Technical Lead", image: "/staff/oleksandr-soshenko.jpg", message: "" },
-        { name: "Satish Maharaj", role: "AWS DevOps Engineer", image: "/staff/satish-maharaj.jpg", message: "" },
+        { name: "Satish Maharaj", role: "AWS DevOps Engineer", image: "/staff/satishmaharaj.jfif", message: "" },
         { name: "Michael Sam", role: "AWS DevOps Engineer", image: "/staff/michael-sam.jpg", message: "" },
         { name: "Jonathan Joseph", role: "AWS DevOps Engineer", image: "/staff/jonathan-joseph.jpg", message: "" },
         { name: "Danelle Modeste", role: "Azure DevOps Engineer", image: "/staff/danelle-modeste.jpg", message: "" },
         { name: "Nareina Mohammed", role: "Process Manager", image: "/staff/danelle-modeste.jpg", message: "" },
+        { name: "Nicole Williams", role: "Process Manager", image: "/staff/danelle-modeste.jpg", message: "" },
+        
       ],
     },
     {
       name: "Digital Banking & Support Systems",
       initials: "DBBS",
-      color: "from-[var(--teal)] to-[var(--blue)]",
-      message: "",
+      color: "from-[var(--orange)] to-[var(--purple)]",
+      message: "DBBS ensures the stability, security, and ongoing enhancement of the Bank’s Internet and Mobile Banking platforms.",
       seniorManager: {
         name: "Dmytro Lavrinenko",
         // role: "Senior Manager, Group Engineering",
@@ -71,10 +73,10 @@ export const gdtdStructure = {
       ],
     },
     {
-      name: "Digital Products",
+      name: "Digital Platforms",
       initials: "DP",
       color: "from-[var(--green)] to-[var(--teal)]",
-      message: "Digital Products ensures the stability, security, and ongoing enhancement of the Bank’s Internet and Mobile Banking platforms.",
+      message: "",
       seniorManager: {
         name: "David Kell",
         // role: "Senior Manager",

@@ -1,9 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
+import { gdtdStructure } from "@/data/gdtd-structure";
 
 export function GmNoteSection() {
   const values = ["Clarity", "Execution", "Trust", "Regional scale"];
+  const { leader } = gdtdStructure;
+  const [imgFailed, setImgFailed] = useState(false);
 
   return (
     <section
@@ -42,13 +48,25 @@ export function GmNoteSection() {
             </p>
 
             <div className="mt-10 flex items-center gap-4">
-              <div className="grid h-14 w-14 place-items-center rounded-full bg-[linear-gradient(135deg,var(--c-primary),var(--blue))] font-bold text-(--navy) shadow-[0_18px_34px_rgba(0,150,199,0.4)]">
-                M
-              </div>
+              {leader.image && !imgFailed ? (
+                <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full border border-(--border) shadow-[0_18px_34px_rgba(0,150,199,0.4)] ring-1 ring-white/12">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={leader.image}
+                    alt={leader.name}
+                    className="h-full w-full object-cover"
+                    onError={() => setImgFailed(true)}
+                  />
+                </div>
+              ) : (
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[linear-gradient(135deg,var(--c-primary),var(--blue))] font-bold text-(--navy) shadow-[0_18px_34px_rgba(0,150,199,0.4)]">
+                  M
+                </div>
+              )}
               <div>
-                <div className="font-semibold text-white">Marlon Persad</div>
+                <div className="font-semibold text-white">{leader.name}</div>
                 <div className="text-sm text-(--muted)">
-                  General Manager, Group Digital Technology Division
+                  {leader.role}, Group Digital Technology Division
                 </div>
               </div>
             </div>

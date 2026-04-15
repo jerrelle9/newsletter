@@ -228,12 +228,12 @@ export function StructureSection() {
   return (
     <section
       id="section-4"
-      className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_50%_8%,rgba(0,180,216,0.12),transparent_16%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
+      className="relative min-h-[200vh] border-b border-(--border) bg-[radial-gradient(circle_at_50%_8%,rgba(0,180,216,0.12),transparent_16%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
     >
       <GalaxyBackground />
       <SectionNumber number="04" />
 
-      <div className="ml-[8vw] min-h-screen max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
+      <div className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
         <Reveal className="mx-auto max-w-3xl text-center">
           <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Our structure
@@ -505,15 +505,21 @@ export function StructureSection() {
 
                       {/* ── Direct reports grid ───────────────────────────── */}
                       {activeTeam.reports.length > 0 && (
-                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                          {activeTeam.reports.map((report, index) => (
-                            <ReportCard
-                              key={report.name}
-                              report={report}
-                              index={index}
-                              gradient={activeTeam.color}
-                            />
-                          ))}
+                        <div className="mt-4 grid gap-3 grid-cols-1 sm:grid-cols-3">
+                          {activeTeam.reports.map((report, index) => {
+                            const loneInRow =
+                              activeTeam.reports.length % 3 === 1 &&
+                              index === activeTeam.reports.length - 1;
+                            return (
+                              <div key={report.name} className={loneInRow ? "sm:col-start-2" : ""}>
+                                <ReportCard
+                                  report={report}
+                                  index={index}
+                                  gradient={activeTeam.color}
+                                />
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
