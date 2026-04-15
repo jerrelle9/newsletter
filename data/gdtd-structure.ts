@@ -1,6 +1,7 @@
 interface Person {
   name: string;
   role?: string;
+  designation?: string;
   image?: string;
   message?: string;
 }
@@ -40,7 +41,9 @@ export const gdtdStructure: GdtdStructure = {
         message: "",
       },
       managers: [
-        { name: "Adrian Lee", image: "staff/adrianlee2.png", message: "Adrian provides leadership for the Technology Platforms Engineering teams, managing DevOps and DevSecOps functions aligned with organizational strategy. His responsibilities include cloud infrastructure management, automated delivery pipelines, and integrated security controls across the development lifecycle." },
+        { name: "Adrian Lee", image: "staff/adrianlee2.png", 
+          message: "Engineering Platforms ensure the Bank’s digital systems work reliably behind the scenes. They maintain the technology foundation that allows online and mobile banking, internal systems, and other digital services to run smoothly, securely, and without interruption. The team also ensures that updates and improvements are delivered safely, securely, and efficiently, while protecting customer information and meeting the Bank’s regulatory standards.",
+        },
        
       ],
       reports: [
@@ -59,7 +62,7 @@ export const gdtdStructure: GdtdStructure = {
       name: "Digital Banking & Support Systems",
       initials: "DBBS",
       color: "from-[var(--orange)] to-[var(--purple)]",
-      message: "DBBS ensures the stability, security, and ongoing enhancement of the Bank’s Internet and Mobile Banking platforms.",
+        message: "Digital Banking & Support Systems is responsible for the operational stability, security, and continuous enhancement of the Bank’s digital banking platforms and supporting technology. This area of GDTD ensures high availability of Internet and Mobile Banking services while maintaining alignment with enterprise architecture, risk management, and regulatory standards, enabling secure and resilient customer-facing digital channels.",
       seniorManager: {
         name: "Dmytro Lavrinenko",
         // role: "Senior Manager, Group Engineering",
@@ -67,7 +70,10 @@ export const gdtdStructure: GdtdStructure = {
         message: "",
       },
       managers: [
-        { name: "Nigel George", image: "/staff/nigelgeorge.jpg", message: "Nigel is responsible for the end‑to‑end oversight of the Bank’s digital banking platforms and supporting technologies. He ensures secure, resilient, and compliant Internet and Mobile Banking services through effective leadership of teams, vendors, and infrastructure." },
+        { name: "Nigel George", image: "/staff/nigelgeorge.jpg", 
+          message: "Digital Banking & Support Systems is responsible for the operational stability, security, and continuous enhancement of the Bank’s digital banking platforms and supporting technology. This area of GDTD ensures high availability of Internet and Mobile Banking services while maintaining alignment with enterprise architecture, risk management, and regulatory standards, enabling secure and resilient customer-facing digital channels.",
+          // role: "",
+        },
         // { name: "Adrian Lee", image: "", message: "" },
       ],
       reports: [
@@ -78,7 +84,7 @@ export const gdtdStructure: GdtdStructure = {
       name: "Engineering Products",
       initials: "EP",
       color: "from-[var(--blue)] to-[var(--purple)]",
-      message: "Engineering Products leads teams that develop and improve the Bank’s systems, ensuring high‑quality delivery aligned with business objectives.",
+        message: "Engineering Products is responsible for leading teams that build and improve the Bank’s systems, ensuring work is delivered to a high standard and supports the Bank’s overall goals. The area works closely with other departments, business partners, and senior leadership, while also managing people, budgets, and resources to deliver results effectively." ,
       seniorManager: {
         name: "Dmytro Lavrinenko",
         role: "Senior Manager, Group Engineering",
@@ -86,7 +92,9 @@ export const gdtdStructure: GdtdStructure = {
         message: "",
       },
       managers: [
-        { name: "Kiran Ramlakhan", role: "Manager", image: "/staff/kiranramlakhan.png", message: "" },
+        { name: "Kiran Ramlakhan", role: "Manager", image: "/staff/kiranramlakhan.png", 
+          message: "Engineering Products is responsible for leading teams that build and improve the Bank’s systems, ensuring work is delivered to a high standard and supports the Bank’s overall goals. The area works closely with other departments, business partners, and senior leadership, while also managing people, budgets, and resources to deliver results effectively." 
+        },
       ],
       reports: [
         { name: "Anh Diep", role: "GDO Technical Lead", image: "/staff/anh-diep.jpg", message: "" },
@@ -103,15 +111,15 @@ export const gdtdStructure: GdtdStructure = {
         name: "David Kell",
         // role: "Senior Manager",
         image: "/staff/davidkell.png",
-        message: "David works with a team of Digital Platform Owners and IT Business Analysts within GTDT, as well as designers, architect engineers, product owners and stakeholders from all parts of the business representing all the markets served by Republic Bank.",
+        // message: "David works with a team of Digital Platform Owners and IT Business Analysts within GTDT, as well as designers, architect engineers, product owners and stakeholders from all parts of the business representing all the markets served by Republic Bank.",
       },
       managers: [
-        { name: "Sasha Ramoutar", role: "Branch Digitalization", image: "/staff/sasharamoutar.png", message: "Sasha is leading the rollout of new digital tools in branches as part of the Bank’s digital transformation.Focusing on improving the customer journey and making daily work easier for branch staff, while supporting more efficient and modern branch operations." },
-        { name: "Fahad Siddiqui", role: "Loan Management ", image: "/staff/fahadsiddiqui.png", message: "Fahad is leading the rollout of a group‑wide digital lending platform that enables faster, fully digital loan products across the Republic Group, replacing manual processes and supporting future growth." },
-        { name: "Vasileios Kapralos", role: "Products", image: "/staff/vasileioskapralos.png", message: "Vasileios sets the long‑term vision and roadmap for the Bank's mobile and app platforms, ensuring they support business goals, regulatory needs, and deliver secure, customer‑focused solutions across all markets." },
-        { name: "Kosti Reshetniak", role: "Instant Payment System (IPS)", image: "/staff/kostireshetniak.png", message: "Kosti leads the Group‑wide instant payments work, delivering one shared system that makes sending and receiving money faster, easier,and more reliable for customers." },
-        { name: "Andrew Strelnykov", role: "Wealth Management", image: "/staff/andrewstrelnykov.png", message: "Andrew drives the strategy & delivery of the Bank's digital wealth capabilities. He leads the rollout of a new Wealth Management core system, and enhancements to the customer wealth portal, with a focus on delivering modern,accessible, and effective digital investing experiences for clients." },
-        { name: "Nicholas Seegobin", role: "Digital Onboarding", image: "/staff/nicholaseegobin.png", message: "Nicholas leads the delivery of the Bank's Group Digital Onboarding platform, providing a seamless online onboarding experience for new and existing customers. He works closely with business and technology teams across the Group to deliver scalable, high‑qualitycapabilities that support the Bank's long-term digital transformation goals." },
+        { name: "Sasha Ramoutar", role: "Branch Digitalization", designation: "Digital Platform Owner", image: "/staff/sasharamoutar.png", message: "Sasha is leading the rollout of new digital tools in branches as part of the Bank’s digital transformation.Focusing on improving the customer journey and making daily work easier for branch staff, while supporting more efficient and modern branch operations." },
+        { name: "Fahad Siddiqui", role: "Loan Management Platform", designation: "Product Owner", image: "/staff/fahadsiddiqui.png", message: "Fahad is leading the rollout of a group‑wide digital lending platform that enables faster, fully digital loan products across the Republic Group, replacing manual processes and supporting future growth." },
+        { name: "Vasileios Kapralos", role: "Products", designation: "Digital Platform Owner", image: "/staff/vasileioskapralos.png", message: "Vasileios sets the long‑term vision and roadmap for the Bank’s mobile and app platforms, ensuring they support business goals, regulatory needs, and deliver secure, customer‑focused solutions across all markets." },
+        { name: "Kosti Reshetniak", role: "Instant Payment System (IPS)", designation: "Digital Platform Owner", image: "/staff/kostireshetniak.png", message: "Kosti leads the Group‑wide instant payments work, delivering one shared system that makes sending and receiving money faster, easier,and more reliable for customers." },
+        { name: "Andrew Strelnykov", role: "Wealth Management", designation: "Digital Platform Owner", image: "/staff/andrewstrelnykov.png", message: "Andrew drives the strategy & delivery of the Bank’s digital wealth capabilities. He leads the rollout of a new Wealth Management core system, and enhancements to the customer wealth portal, with a focus on delivering modern,accessible, and effective digital investing experiences for clients." },
+        { name: "Nicholas Seegobin", role: "Digital Onboarding", designation: "Digital Platform Owner", image: "/staff/nicholaseegobin.png", message: "Nicholas leads the delivery of the Bank’s Group Digital Onboarding platform, providing a seamless online onboarding experience for new and existing customers. He works closely with business and technology teams across the Group to deliver scalable, high‑qualitycapabilities that support the Bank’s long-term digital transformation goals." },
 
       ],
       reports: [

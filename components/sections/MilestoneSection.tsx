@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { Fragment, useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -170,6 +170,107 @@ function HorizontalBridge({
   );
 }
 
+/* ─── Pathway step — desktop (between milestone rows) ────────────────────── */
+function PathwayStep({
+  fromColor,
+  toColor,
+  isQuarterTransition,
+  toQuarter,
+  delay,
+}: {
+  fromColor: string;
+  toColor: string;
+  isQuarterTransition: boolean;
+  toQuarter?: string;
+  delay: number;
+}) {
+  return (
+    <div className="grid grid-cols-[1fr_64px_1fr] items-center">
+      <div />
+      <div className="flex flex-col items-center gap-1 py-2">
+        {isQuarterTransition && toQuarter && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.75 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.35, delay }}
+            className="mb-1 rounded-full border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-1"
+          >
+            <span
+              className="text-[9px] font-semibold uppercase tracking-[0.26em]"
+              style={{ color: toColor }}
+            >
+              {toQuarter}
+            </span>
+          </motion.div>
+        )}
+        {/* Flowing chevrons pointing downward */}
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="h-1.5 w-2.5"
+            style={{
+              background: `linear-gradient(180deg, ${fromColor}99, ${toColor}bb)`,
+              clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)",
+            }}
+            animate={{ opacity: [0, 0.8, 0], y: [-3, 4] }}
+            transition={{
+              duration: 1.6,
+              delay: i * 0.28 + delay,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </div>
+      <div />
+    </div>
+  );
+}
+
+/* ─── Pathway step — mobile (between milestone items) ────────────────────── */
+function MobilePathwayStep({
+  fromColor,
+  toColor,
+  isQuarterTransition,
+  toQuarter,
+}: {
+  fromColor: string;
+  toColor: string;
+  isQuarterTransition: boolean;
+  toQuarter?: string;
+}) {
+  return (
+    <div className="relative flex gap-5 py-1.5">
+      {/* Spine column — flowing dots */}
+      <div className="flex w-6 shrink-0 flex-col items-center gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="h-1 w-1 rounded-full"
+            style={{ background: fromColor }}
+            animate={{ opacity: [0, 0.7, 0], y: [-2, 4] }}
+            transition={{ duration: 1.4, delay: i * 0.22, repeat: Infinity, ease: "easeInOut" }}
+          />
+        ))}
+      </div>
+      {/* Quarter badge */}
+      {isQuarterTransition && toQuarter && (
+        <div className="flex items-center">
+          <div className="rounded-full border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.03)] px-2.5 py-1">
+            <span
+              className="text-[9px] font-semibold uppercase tracking-[0.22em]"
+              style={{ color: toColor }}
+            >
+              {toQuarter}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Milestone card ──────────────────────────────────────────────────────── */
 function MilestoneCard({ milestone }: { milestone: Milestone }) {
   const cfg = CATEGORY_CONFIG[milestone.category];
@@ -274,19 +375,32 @@ export function MilestoneSection() {
               className="inset-y-0 left-[11px]"
             />
 
-            {milestones.map((ms) => {
+            {milestones.map((ms, i) => {
               const cfg = CATEGORY_CONFIG[ms.category];
+              const nextMs = milestones[i + 1];
+              const nextCfg = nextMs ? CATEGORY_CONFIG[nextMs.category] : null;
+              const isQuarterTransition = nextMs ? ms.quarter !== nextMs.quarter : false;
               return (
-                <div key={ms.id} className="relative flex gap-5 pb-8 last:pb-0">
-                  {/* Node on the left rail */}
-                  <div className="flex w-6 shrink-0 flex-col items-center pt-5">
-                    <TimelineNode color={cfg.nodeColor} />
+                <Fragment key={ms.id}>
+                  <div className="relative flex gap-5 pb-4">
+                    {/* Node on the left rail */}
+                    <div className="flex w-6 shrink-0 flex-col items-center pt-5">
+                      <TimelineNode color={cfg.nodeColor} />
+                    </div>
+                    {/* Card */}
+                    <div className="min-w-0 flex-1">
+                      <MilestoneCard milestone={ms} />
+                    </div>
                   </div>
-                  {/* Card */}
-                  <div className="min-w-0 flex-1">
-                    <MilestoneCard milestone={ms} />
-                  </div>
-                </div>
+                  {nextMs && (
+                    <MobilePathwayStep
+                      fromColor={cfg.nodeColor}
+                      toColor={nextCfg!.nodeColor}
+                      isQuarterTransition={isQuarterTransition}
+                      toQuarter={isQuarterTransition ? nextMs.quarter : undefined}
+                    />
+                  )}
+                </Fragment>
               );
             })}
           </div>
@@ -303,43 +417,54 @@ export function MilestoneSection() {
               {milestones.map((ms, i) => {
                 const cfg = CATEGORY_CONFIG[ms.category];
                 const isLeft = i % 2 === 0;
+                const nextMs = milestones[i + 1];
+                const nextCfg = nextMs ? CATEGORY_CONFIG[nextMs.category] : null;
+                const isQuarterTransition = nextMs ? ms.quarter !== nextMs.quarter : false;
 
                 return (
-                  <div
-                    key={ms.id}
-                    className="grid grid-cols-[1fr_64px_1fr] items-center py-5"
-                  >
-                    {/* Left slot */}
-                    <div className="flex items-center">
-                      {isLeft ? (
-                        <>
-                          <div className="min-w-0 flex-1">
-                            <MilestoneCard milestone={ms} />
-                          </div>
-                          {/* Bridge from card to spine */}
-                          <HorizontalBridge color={cfg.nodeColor} direction="left" />
-                        </>
-                      ) : null}
+                  <Fragment key={ms.id}>
+                    <div className="grid grid-cols-[1fr_64px_1fr] items-center py-5">
+                      {/* Left slot */}
+                      <div className="flex items-center">
+                        {isLeft ? (
+                          <>
+                            <div className="min-w-0 flex-1">
+                              <MilestoneCard milestone={ms} />
+                            </div>
+                            <HorizontalBridge color={cfg.nodeColor} direction="left" />
+                          </>
+                        ) : null}
+                      </div>
+
+                      {/* Central node */}
+                      <div className="flex justify-center">
+                        <TimelineNode color={cfg.nodeColor} />
+                      </div>
+
+                      {/* Right slot */}
+                      <div className="flex items-center">
+                        {!isLeft ? (
+                          <>
+                            <HorizontalBridge color={cfg.nodeColor} direction="right" />
+                            <div className="min-w-0 flex-1">
+                              <MilestoneCard milestone={ms} />
+                            </div>
+                          </>
+                        ) : null}
+                      </div>
                     </div>
 
-                    {/* Central node */}
-                    <div className="flex justify-center">
-                      <TimelineNode color={cfg.nodeColor} />
-                    </div>
-
-                    {/* Right slot */}
-                    <div className="flex items-center">
-                      {!isLeft ? (
-                        <>
-                          {/* Bridge from spine to card */}
-                          <HorizontalBridge color={cfg.nodeColor} direction="right" />
-                          <div className="min-w-0 flex-1">
-                            <MilestoneCard milestone={ms} />
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
+                    {/* Pathway connector between milestones */}
+                    {nextMs && (
+                      <PathwayStep
+                        fromColor={cfg.nodeColor}
+                        toColor={nextCfg!.nodeColor}
+                        isQuarterTransition={isQuarterTransition}
+                        toQuarter={isQuarterTransition ? nextMs.quarter : undefined}
+                        delay={0.08 + i * 0.04}
+                      />
+                    )}
+                  </Fragment>
                 );
               })}
             </div>

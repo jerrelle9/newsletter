@@ -20,10 +20,10 @@ function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
       className="flex flex-col items-center text-center"
     >
       <OrgBubble label="GM" size="lg" image={leader.image} />
-      <div className="mt-4 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
+      <div className="mt-4 text-xl font-semibold text-white">{leader.name}</div>
+      <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
         {leader.role}
       </div>
-      <div className="mt-1 text-xl font-semibold text-white">{leader.name}</div>
       <div className="mt-1 text-sm text-(--dim)">Group Digital Technology Division</div>
     </motion.div>
   );
@@ -59,10 +59,10 @@ function SmCard({
           size="md"
         />
         <div>
+          <div className="mt-1 text-sm font-semibold text-white">{name}</div>
           <div className="text-[9px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
             Senior Manager
           </div>
-          <div className="mt-1 text-sm font-semibold text-white">{name}</div>
         </div>
       </div>
     </motion.div>
@@ -98,56 +98,77 @@ function ManagerCard({
         size="md"
       />
       <div className="min-w-0">
-        <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
         <div className="mt-1 truncate text-sm font-semibold text-white">{name}</div>
+        <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
       </div>
     </motion.div>
   );
 }
 
-/* ─── Engineering manager card with message ──────────────────────────────── */
-function EngineeringManagerCard({
-  name,
-  role,
-  image,
-  message,
-  delay,
-}: {
-  name: string;
-  role?: string;
-  image?: string;
-  message?: string;
-  delay: number;
-}) {
-  const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
 
+/* ─── Engineering section: accent config ────────────────────────────────── */
+const ENG_TEAM_ACCENT: Record<string, { color: string; ring: string }> = {
+  "Digital Banking & Support Systems": {
+    color: "var(--purp-lt)",
+    ring: "rgba(167,139,250,0.4)",
+  },
+  "Engineering Platforms": {
+    color: "var(--orange)",
+    ring: "rgba(255,107,53,0.4)",
+  },
+  "Engineering Products": {
+    color: "var(--gold)",
+    ring: "rgba(245,166,35,0.4)",
+  },
+};
+
+/* ─── Engineering section: small avatar ─────────────────────────────────── */
+function EngAvatar({
+  initials,
+  image,
+  size = "md",
+  accentColor,
+  ringColor,
+}: {
+  initials: string;
+  image?: string;
+  size?: "md" | "lg" | "xl";
+  accentColor?: string;
+  ringColor?: string;
+}) {
+  const sizeMap = {
+    md: "h-14 w-14 text-sm",
+    lg: "h-20 w-20 text-lg",
+    xl: "h-24 w-24 text-2xl",
+  };
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ delay, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-      className="relative overflow-hidden rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.56)] p-6 backdrop-blur-xl"
+    <div
+      className={`relative shrink-0 rounded-full ${sizeMap[size]}`}
+      style={{ boxShadow: `0 0 0 1px ${ringColor ?? "rgba(255,255,255,0.08)"}` }}
     >
-      <div className="absolute inset-x-0 top-0 h-[2px] bg-linear-to-r from-[var(--blue)] to-[var(--purple)]" />
-      <div className="flex items-center gap-4">
-        <OrgBubble
-          label={initials}
-          gradient="from-[var(--blue)] to-[var(--purple)]"
-          image={image}
-          size="md"
+      {image ? (
+        <img
+          src={image}
+          alt={initials}
+          className="h-full w-full rounded-full object-cover object-top"
         />
-        <div>
-          <div className="text-[9px] font-medium uppercase tracking-[0.22em] text-(--dim)">
-            {role ?? "Manager"}
-          </div>
-          <div className="text-sm font-semibold text-white">{name}</div>
+      ) : (
+        <div
+          className="flex h-full w-full items-center justify-center rounded-full bg-[var(--navy)] font-light tracking-[0.08em]"
+          style={{ color: accentColor ?? "var(--light)" }}
+        >
+          {initials}
         </div>
-      </div>
-      {message && (
-        <p className="mt-5 text-xs leading-6 text-(--light)">{message}</p>
       )}
-    </motion.div>
+      {/* Pulsing ring overlay */}
+      <motion.span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-full"
+        style={{ boxShadow: `0 0 0 1px ${accentColor ?? "var(--light)"}` }}
+        animate={{ opacity: [0.45, 0, 0.45], scale: [1, 1.22, 1] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
   );
 }
 
@@ -196,6 +217,19 @@ export function StructureSection() {
 
   // Engineering SM is Dmytro — first entry (Engineering Platforms, DBBS, Engineering Products)
   const engineeringSm = smList[0];
+
+  // All teams that report to Dmytro
+  const engineeringTeams = useMemo(
+    () => gdtdStructure.teams.filter((t) => t.seniorManager.name === "Dmytro Lavrinenko"),
+    []
+  );
+
+  // Digital Platforms SM and team
+  const digitalPlatformsSm = smList.find((sm) => sm.name === "David Kell");
+  const digitalPlatformsTeam = useMemo(
+    () => gdtdStructure.teams.find((t) => t.name === "Digital Platforms"),
+    []
+  );
 
   return (
     <section
@@ -457,49 +491,241 @@ export function StructureSection() {
 
         {/* ── Layer 3: Engineering & Platforms subsection ───────────────── */}
         {engineeringSm && (
+          <div id="section-engineering">
           <Reveal className="mt-10">
             <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
               <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
                 Engineering &amp; Platforms
               </div>
 
-              {/* SM row */}
+              {/* ── Pillar header ─────────────────────────────────────────── */}
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="mb-8 mt-6 flex items-baseline gap-4 border-b border-[rgba(255,255,255,0.07)] pb-4"
+              >
+                <span className="tabular-nums text-sm font-medium uppercase tracking-[0.24em] text-(--dim)">
+                  01
+                </span>
+                <span className="text-sm font-medium uppercase tracking-[0.24em] text-(--light)">
+                  Engineering
+                </span>
+                <span className="ml-auto text-xs font-medium uppercase tracking-[0.18em] text-(--dim)">
+                  {engineeringTeams.length} teams
+                </span>
+              </motion.div>
+
+              {/* ── Senior Manager card ───────────────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="mt-6 flex items-center gap-4 rounded-2xl border border-(--c-primary)/20 bg-[rgba(0,180,216,0.06)] px-5 py-4"
+                transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="mx-auto mb-4 flex w-full max-w-[420px] flex-col items-center rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[var(--navy)] px-10 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
               >
-                <OrgBubble
-                  label={engineeringSm.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
-                  gradient="from-[var(--teal)] to-[var(--blue)]"
+                <EngAvatar
+                  initials={engineeringSm.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
                   image={engineeringSm.image}
-                  size="md"
+                  size="lg"
+                  accentColor={ENG_TEAM_ACCENT[engineeringTeams[0]?.name]?.color ?? "var(--purp-lt)"}
+                  ringColor={ENG_TEAM_ACCENT[engineeringTeams[0]?.name]?.ring ?? "rgba(167,139,250,0.4)"}
                 />
-                <div>
-                  <div className="text-[9px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
-                    Senior Manager
-                  </div>
-                  <div className="mt-0.5 text-sm font-semibold text-white">{engineeringSm.name}</div>
+                <div className="mt-5 text-2xl font-semibold text-white">{engineeringSm.name}</div>
+                <div
+                  className="mt-1 text-[11px] font-semibold uppercase tracking-[0.24em]"
+                  style={{ color: ENG_TEAM_ACCENT[engineeringTeams[0]?.name]?.color ?? "var(--purp-lt)" }}
+                >
+                  Senior Manager, Group Engineering
                 </div>
               </motion.div>
 
-              {/* Manager cards with messages */}
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                {engineeringSm.managers.map((mgr, i) => (
-                  <EngineeringManagerCard
-                    key={mgr.name}
-                    name={mgr.name}
-                    role={mgr.role}
-                    image={mgr.image}
-                    message={mgr.message}
-                    delay={0.2 + i * 0.1}
-                  />
-                ))}
+              {/* Vertical connector SM → unit cards */}
+              <div className="mb-6 flex justify-center">
+                <DropLine delay={0.35} height="h-8" />
+              </div>
+
+              {/* ── Unit cards grid ────────────────────────────────────────── */}
+              <div className="grid gap-5 md:grid-cols-3">
+                {engineeringTeams.map((team, i) => {
+                  const accent = ENG_TEAM_ACCENT[team.name] ?? { color: "var(--blue-lt)", ring: "rgba(0,180,230,0.4)" };
+                  const lead = team.managers[0];
+                  const leadInitials = lead ? lead.name.split(" ").map((p) => p[0]).join("").slice(0, 2) : "??";
+
+                  return (
+                    <motion.div
+                      key={team.name}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.6, delay: 0.15 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      className="group flex h-[460px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                    >
+                      {/* Header row: accent bar + short name */}
+                      <div className="mb-6 flex items-center justify-between">
+                        <div
+                          className="h-1 w-10 rounded-full"
+                          style={{ background: accent.color }}
+                        />
+                        <span
+                          className="text-[11px] font-semibold uppercase tracking-[0.22em]"
+                          style={{ color: accent.color }}
+                        >
+                          {team.initials}
+                        </span>
+                      </div>
+
+                      {/* Unit name — fixed height so lead rows stay aligned across cards */}
+                      <h3 className="mb-6 flex h-[56px] items-start text-lg font-semibold leading-snug text-white">
+                        {team.name}
+                      </h3>
+
+                      {/* Lead row */}
+                      {lead && (
+                        <div className="mb-6 flex items-center gap-4">
+                          <EngAvatar
+                            initials={leadInitials}
+                            image={lead.image}
+                            size="md"
+                            accentColor={accent.color}
+                            ringColor={accent.ring}
+                          />
+                          <div className="min-w-0">
+                            <div className="truncate text-base font-semibold text-white">{lead.name}</div>
+                            <div className="truncate text-sm text-(--muted)">{lead.role ?? "Manager"}</div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Description — centered vertically in remaining space */}
+                      {team.message && (
+                        <div className="flex flex-1 items-start overflow-y-auto pt-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+                          <p className="text-sm leading-7 text-(--light)">{team.message}</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
           </Reveal>
+          </div>
+        )}
+
+        {/* ── Layer 4: Digital Platforms subsection ────────────────────── */}
+        {digitalPlatformsSm && digitalPlatformsTeam && (
+          <div id="section-digital-platforms">
+          <Reveal className="mt-10">
+            <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl">
+              <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
+                Digital Platforms
+              </div>
+
+              {/* ── Pillar header ─────────────────────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.4, delay: 0.2 }}
+                className="mb-8 mt-6 flex items-baseline gap-4 border-b border-[rgba(255,255,255,0.07)] pb-4"
+              >
+                <span className="tabular-nums text-sm font-medium uppercase tracking-[0.24em] text-(--dim)">
+                  02
+                </span>
+                <span className="text-sm font-medium uppercase tracking-[0.24em] text-(--light)">
+                  Digital Platforms
+                </span>
+                <span className="ml-auto text-xs font-medium uppercase tracking-[0.18em] text-(--dim)">
+                  {digitalPlatformsTeam.managers.length} platform owners
+                </span>
+              </motion.div>
+
+              {/* ── Senior Manager card ───────────────────────────────────── */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="mx-auto mb-4 flex w-full max-w-[420px] flex-col items-center rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[var(--navy)] px-10 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
+              >
+                <EngAvatar
+                  initials={digitalPlatformsSm.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
+                  image={digitalPlatformsSm.image}
+                  size="lg"
+                  accentColor="var(--green)"
+                  ringColor="rgba(6,214,160,0.4)"
+                />
+                <div className="mt-5 text-2xl font-semibold text-white">{digitalPlatformsSm.name}</div>
+                <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-[var(--green)]">
+                  Senior Manager, Digital Platforms
+                </div>
+                {digitalPlatformsTeam.seniorManager.message && (
+                  <p className="mt-5 text-sm leading-7 text-(--light)">
+                    {digitalPlatformsTeam.seniorManager.message}
+                  </p>
+                )}
+              </motion.div>
+
+              {/* Vertical connector SM → platform owner cards */}
+              <div className="mb-6 flex justify-center">
+                <DropLine delay={0.35} height="h-8" />
+              </div>
+
+              {/* ── Platform owner cards grid ─────────────────────────────── */}
+              <div className="grid gap-5 md:grid-cols-3">
+                {digitalPlatformsTeam.managers.map((mgr, i) => {
+                  const initials = mgr.name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+                  return (
+                    <motion.div
+                      key={mgr.name}
+                      initial={{ opacity: 0, y: 24 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, amount: 0.2 }}
+                      transition={{ duration: 0.6, delay: 0.15 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                      className="group flex h-[560px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                    >
+                      {/* Header row: accent bar + platform badge */}
+                      <div className="mb-6 flex items-center justify-between">
+                        <div className="h-1 w-10 rounded-full bg-[var(--green)]" />
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--green)]">
+                          DP
+                        </span>
+                      </div>
+
+                      {/* Platform / role name — fixed height keeps owner rows aligned */}
+                      <h3 className="mb-6 flex h-[56px] items-start text-lg font-semibold leading-snug text-white">
+                        {mgr.role ?? "Platform Owner"}
+                      </h3>
+
+                      {/* Owner row */}
+                      <div className="mb-6 flex items-center gap-4">
+                        <EngAvatar
+                          initials={initials}
+                          image={mgr.image}
+                          size="md"
+                          accentColor="var(--green)"
+                          ringColor="rgba(6,214,160,0.4)"
+                        />
+                        <div className="min-w-0">
+                          <div className="truncate text-base font-semibold text-white">{mgr.name}</div>
+                          <div className="text-sm text-(--muted)">{mgr.designation ?? "Platform Owner"}</div>
+                        </div>
+                      </div>
+
+                      {/* Description — centered vertically in remaining space */}
+                      {mgr.message && (
+                        <div className="flex flex-1 items-start overflow-y-auto pt-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+                          <p className="text-sm leading-7 text-(--light)">{mgr.message}</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </Reveal>
+          </div>
         )}
 
       </div>
