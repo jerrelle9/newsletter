@@ -535,18 +535,36 @@ export function StructureSection() {
                       </div>
 
                       {/* ── Level 2: Managers ─────────────────────────── */}
-                      <div className={`w-full px-2 grid gap-4 ${sm.managers.length > 3 ? "grid-cols-2" : "grid-cols-3"}`}>
-                        {sm.managers.map((mgr, j) => (
-                          <ManagerNode
-                            key={mgr.name}
-                            name={mgr.name}
-                            designation={mgr.designation}
-                            role={mgr.role}
-                            image={mgr.image}
-                            delay={0.5 + i * 0.08 + j * 0.06}
-                          />
-                        ))}
-                      </div>
+                      {sm.name === engineeringSm?.name ? (
+                        /* Engineering: vertical column */
+                        <div className="w-full flex flex-col items-center gap-4 pt-6">
+                          {sm.managers.map((mgr, j) => (
+                            <div key={mgr.name} className="w-full px-3">
+                              <ManagerNode
+                                name={mgr.name}
+                                designation={mgr.designation}
+                                role={mgr.role}
+                                image={mgr.image}
+                                delay={0.56 + i * 0.08 + j * 0.08}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* Others: horizontal row */
+                        <div className={`w-full px-2 grid gap-4 ${sm.managers.length > 3 ? "grid-cols-2" : "grid-cols-3"}`}>
+                          {sm.managers.map((mgr, j) => (
+                            <ManagerNode
+                              key={mgr.name}
+                              name={mgr.name}
+                              designation={mgr.designation}
+                              role={mgr.role}
+                              image={mgr.image}
+                              delay={0.5 + i * 0.08 + j * 0.06}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
