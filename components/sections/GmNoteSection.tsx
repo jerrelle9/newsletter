@@ -19,7 +19,7 @@ export function GmNoteSection() {
       <GalaxyBackground />
       <SectionNumber number="03" />
 
-      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
+      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16 xl:px-10 2xl:px-16">
         <Reveal className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_90px_rgba(1,17,27,0.52)] backdrop-blur-2xl md:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.14),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))]" />
           <div className="relative">

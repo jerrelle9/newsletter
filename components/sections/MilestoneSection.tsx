@@ -87,7 +87,7 @@ function TimelineSpine({
   containerRef,
   className,
 }: {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   className: string;
 }) {
   const { scrollYProgress } = useScroll({
@@ -331,7 +331,7 @@ export function MilestoneSection() {
 
       <div
         ref={sectionRef}
-        className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16"
+        className="ml-[8vw] max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] px-6 py-24 md:px-10 lg:px-16 xl:px-10 2xl:px-16"
       >
         {/* ── Section header ──────────────────────────────────────────────── */}
         <Reveal className="max-w-3xl">

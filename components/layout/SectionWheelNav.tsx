@@ -57,7 +57,7 @@ export function SectionWheelNav() {
   const handleClick = (href: string) => setActiveHref(href);
 
   return (
-    <div className="fixed right-[calc(13vw-160px)] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+    <div className="fixed right-2 xl:right-4 2xl:right-[calc(13vw-160px)] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
       <div className="relative flex items-center">
         <div className="relative h-[320px] w-[320px]">
 

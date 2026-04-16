@@ -76,15 +76,15 @@ export function HeroSection() {
         ))}
       </motion.div>
 
-      <div className="relative ml-[8vw] grid w-full max-w-[66vw] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:px-16">
+      <div className="relative ml-[8vw] grid w-full max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:px-16 xl:px-10 2xl:px-16">
         <Reveal className="max-w-3xl">
           {/* <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[rgba(0,180,216,0.16)] bg-[rgba(0,180,216,0.1)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-(--blue-lt) backdrop-blur-xl">
             <span className="h-2 w-2 rounded-full bg-(--teal) shadow-[0_0_18px_rgba(0,180,216,0.85)]" />
             Issue 01 / GTD / Republic Bank
           </div> */}
-          <h1 className="max-w-2xl text-3xl font-black leading-[0.88] tracking-[-0.04em] md:text-5xl xl:text-[3.6rem]">
+          <h1 className="max-w-2xl text-3xl font-black leading-[0.88] tracking-[-0.04em] md:text-5xl xl:text-[2.8rem] 2xl:text-[3.6rem]">
             <span className="block text-(--light)">MEET</span>
-            <span className="block mt-4 mb-4 text-center xl:text-[8.6rem] text-transparent [-webkit-text-stroke:1px_rgba(0,180,230,0.9)]">
+            <span className="block mt-4 mb-4 text-center xl:text-[5.5rem] 2xl:text-[8.6rem] text-transparent [-webkit-text-stroke:1px_rgba(0,180,230,0.9)]">
               GDTD
             </span>
             RBL&apos;s

@@ -31,7 +31,7 @@ export function ContactSection() {
       <GalaxyBackground />
       <SectionNumber number="07" />
 
-      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-16">
+      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:px-16 xl:px-10 2xl:px-16">
         <Reveal>
           <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Reach out

@@ -40,7 +40,7 @@ export function WhoWeAreSection() {
       <GalaxyBackground />
       <SectionNumber number="02" />
 
-      <div className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
+      <div className="ml-[8vw] max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] px-6 py-24 md:px-10 lg:px-16 xl:px-10 2xl:px-16">
 
         {/* ── Section header ─────────────────────────────────────────────── */}
         <Reveal className="max-w-3xl">
