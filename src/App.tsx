@@ -40,7 +40,7 @@ export default function App() {
             <WhoWeAreSection />
             <GmNoteSection />
             <StructureSection />
-            <CapabilitiesSection />
+            {/* <CapabilitiesSection /> */}
             <MilestoneSection />
             <ContactSection />
           </main>

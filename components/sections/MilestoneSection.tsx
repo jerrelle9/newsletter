@@ -280,11 +280,11 @@ export function MilestoneSection() {
 
   return (
     <section
-      id="section-6"
+      id="section-5"
       className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_70%_12%,rgba(139,92,246,0.1),transparent_24%),radial-gradient(circle_at_14%_80%,rgba(0,180,216,0.1),transparent_20%),linear-gradient(180deg,var(--surface)_0%,var(--navy)_100%)]"
     >
       <GalaxyBackground />
-      <SectionNumber number="06" />
+      <SectionNumber number="05" />
 
       <div
         ref={sectionRef}

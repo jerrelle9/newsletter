@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { gsap, ScrollTrigger, useGSAP } from "@/src/gsap-init";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { OrgBubble } from "@/components/org/OrgBubble";
@@ -11,21 +11,27 @@ import { orgOverview } from "@/data/org-overview";
 
 /* ─── GM node ─────────────────────────────────────────────────────────────── */
 function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!ref.current) return;
+    gsap.fromTo(ref.current,
+      { opacity: 0, scale: 0.8, y: 10 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.7)",
+        scrollTrigger: { trigger: ref.current, start: "top 88%", toggleActions: "play none none none" },
+      },
+    );
+  }, { scope: ref });
+
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8, y: 10 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ duration: 0.5, type: "spring", stiffness: 200, damping: 22 }}
-      className="flex flex-col items-center text-center"
-    >
+    <div ref={ref} className="flex flex-col items-center text-center">
       <OrgBubble label="GM" size="lg" image={leader.image} />
       <div className="mt-4 text-xl font-semibold text-white">{leader.name}</div>
       <div className="mt-1 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
         {leader.role}
       </div>
       <div className="mt-1 text-sm text-(--dim)">Group Digital Technology Division</div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -41,14 +47,22 @@ function SmCard({
   role?: string;
   delay: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
 
+  useGSAP(() => {
+    if (!ref.current) return;
+    gsap.fromTo(ref.current,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.38, delay, ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 90%", toggleActions: "play none none none" },
+      },
+    );
+  }, { scope: ref });
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ delay, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={ref}
       className="relative overflow-hidden rounded-3xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-5 shadow-[0_12px_40px_rgba(1,17,27,0.35)] backdrop-blur-xl"
     >
       {/* Top accent */}
@@ -67,7 +81,7 @@ function SmCard({
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -85,14 +99,22 @@ function ManagerCard({
   image?: string;
   delay: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
   const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
 
+  useGSAP(() => {
+    if (!ref.current) return;
+    gsap.fromTo(ref.current,
+      { opacity: 0, y: 14, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.34, delay, ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 92%", toggleActions: "play none none none" },
+      },
+    );
+  }, { scope: ref });
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 14, scale: 0.95 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ delay, duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
+    <div
+      ref={ref}
       className="relative flex items-center gap-4 rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.5)] p-4"
     >
       <OrgBubble
@@ -111,7 +133,7 @@ function ManagerCard({
           <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -119,6 +141,8 @@ function ManagerCard({
 /* ─── Scrollable description with overflow indicator ────────────────────── */
 function ScrollableDescription({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
+  const fadeRef = useRef<HTMLDivElement>(null);
+  const bounceRef = useRef<HTMLDivElement>(null);
   const [hasOverflow, setHasOverflow] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
 
@@ -131,6 +155,16 @@ function ScrollableDescription({ children }: { children: React.ReactNode }) {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (!fadeRef.current) return;
+    gsap.to(fadeRef.current, { opacity: hasOverflow && !atBottom ? 1 : 0, duration: 0.25 });
+  }, [hasOverflow, atBottom]);
+
+  useGSAP(() => {
+    if (!bounceRef.current) return;
+    gsap.to(bounceRef.current, { y: 3, duration: 0.7, repeat: -1, yoyo: true, ease: "sine.inOut" });
+  }, { scope: bounceRef });
 
   const handleScroll = () => {
     const el = ref.current;
@@ -148,25 +182,21 @@ function ScrollableDescription({ children }: { children: React.ReactNode }) {
         {children}
       </div>
 
-      {/* Fade + scroll cue — only when overflow exists and not yet at bottom */}
-      <motion.div
-        animate={{ opacity: hasOverflow && !atBottom ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
+      {/* Fade + scroll cue */}
+      <div
+        ref={fadeRef}
+        style={{ opacity: 0 }}
         className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center justify-end gap-1 bg-gradient-to-t from-[var(--navy)] via-[var(--navy)]/80 to-transparent pb-1.5 pt-10"
       >
-        <motion.div
-          animate={{ y: [0, 3, 0] }}
-          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center gap-0.5"
-        >
+        <div ref={bounceRef} className="flex flex-col items-center gap-0.5">
           <div className="h-px w-4 bg-(--dim)/60" />
           <div className="h-px w-3 bg-(--dim)/40" />
           <div className="h-px w-2 bg-(--dim)/20" />
-        </motion.div>
+        </div>
         <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-(--dim)">
           scroll
         </span>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -201,11 +231,21 @@ function EngAvatar({
   accentColor?: string;
   ringColor?: string;
 }) {
+  const pulseRef = useRef<HTMLSpanElement>(null);
   const sizeMap = {
     md: "h-14 w-14 text-sm",
     lg: "h-20 w-20 text-lg",
     xl: "h-24 w-24 text-2xl",
   };
+
+  useGSAP(() => {
+    if (!pulseRef.current) return;
+    gsap.fromTo(pulseRef.current,
+      { opacity: 0.45, scale: 1 },
+      { opacity: 0, scale: 1.22, duration: 1.5, repeat: -1, yoyo: true, ease: "sine.inOut" },
+    );
+  }, { scope: pulseRef });
+
   return (
     <div
       className={`relative shrink-0 rounded-full ${sizeMap[size]}`}
@@ -226,12 +266,11 @@ function EngAvatar({
         </div>
       )}
       {/* Pulsing ring overlay */}
-      <motion.span
+      <span
+        ref={pulseRef}
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-full"
         style={{ boxShadow: `0 0 0 1px ${accentColor ?? "var(--light)"}` }}
-        animate={{ opacity: [0.45, 0, 0.45], scale: [1, 1.22, 1] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
     </div>
   );
@@ -239,20 +278,86 @@ function EngAvatar({
 
 /* ─── Animated vertical drop line ────────────────────────────────────────── */
 function DropLine({ delay, height = "h-10" }: { delay: number; height?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!ref.current) return;
+    gsap.fromTo(ref.current,
+      { scaleY: 0, opacity: 0 },
+      { scaleY: 1, opacity: 1, duration: 0.35, delay, ease: "power1.out", transformOrigin: "top",
+        scrollTrigger: { trigger: ref.current, start: "top 92%", toggleActions: "play none none none" },
+      },
+    );
+  }, { scope: ref });
+
   return (
-    <motion.div
-      initial={{ scaleY: 0, opacity: 0 }}
-      whileInView={{ scaleY: 1, opacity: 1 }}
-      viewport={{ once: true, amount: 0.5 }}
-      transition={{ delay, duration: 0.35, ease: "easeOut" }}
-      style={{ originY: 0 }}
+    <div
+      ref={ref}
       className={`${height} w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.7),rgba(0,180,216,0.2))]`}
     />
   );
 }
 
+/* ─── Reusable GSAP scroll-in wrapper (replaces motion.div whileInView) ── */
+function AnimIn({
+  children,
+  className,
+  from,
+  delay = 0,
+  duration = 0.45,
+  start = "top 90%",
+  style,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  from: gsap.TweenVars;
+  delay?: number;
+  duration?: number;
+  start?: string;
+  style?: React.CSSProperties;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!ref.current) return;
+    const to: gsap.TweenVars = { duration, delay, ease: "power3.out" };
+    for (const key of Object.keys(from)) {
+      if (key === "opacity") to.opacity = 1;
+      else if (key === "y") to.y = 0;
+      else if (key === "x") to.x = 0;
+      else if (key === "scale") to.scale = 1;
+      else if (key === "scaleX") to.scaleX = 1;
+      else if (key === "scaleY") to.scaleY = 1;
+    }
+    to.scrollTrigger = { trigger: ref.current, start, toggleActions: "play none none none" };
+    gsap.fromTo(ref.current, { ...from }, to);
+  }, { scope: ref });
+
+  return <div ref={ref} className={className} style={style}>{children}</div>;
+}
+
 /* ─── Main section ────────────────────────────────────────────────────────── */
 export function StructureSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const gdtdBoxRef = useRef<HTMLDivElement>(null);
+  const gdtdRingRef = useRef<HTMLSpanElement>(null);
+
+  /* ── GDTD pulse animation ─────────────────────────────────────────────── */
+  useGSAP(() => {
+    if (gdtdBoxRef.current) {
+      gsap.fromTo(gdtdBoxRef.current,
+        { boxShadow: "0 0 18px 2px rgba(0,180,216,0.3)", borderColor: "rgba(0,180,216,0.5)" },
+        { boxShadow: "0 0 48px 10px rgba(0,180,216,0.75)", borderColor: "rgba(0,180,216,1)",
+          duration: 1, repeat: -1, yoyo: true, ease: "sine.inOut" },
+      );
+    }
+    if (gdtdRingRef.current) {
+      gsap.fromTo(gdtdRingRef.current,
+        { opacity: 0.5, scale: 1 },
+        { opacity: 0, scale: 1.12, duration: 1, repeat: -1, yoyo: true, ease: "sine.inOut" },
+      );
+    }
+  }, { scope: sectionRef });
   // Deduplicate SMs across teams, collecting all their managers
   const smList = useMemo(() => {
     const map = new Map<
@@ -299,6 +404,7 @@ export function StructureSection() {
 
   return (
     <section
+      ref={sectionRef}
       id="section-4"
       className="relative min-h-[200vh] border-b border-(--border) bg-[radial-gradient(circle_at_50%_8%,rgba(0,180,216,0.12),transparent_16%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
     >
@@ -331,11 +437,9 @@ export function StructureSection() {
             <div className="mt-8 flex flex-col items-center">
 
               {/* ── CIDTO — prominent top node ──────────────────────────── */}
-              <motion.div
-                initial={{ opacity: 0, y: -14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: 0.1 }}
+              <AnimIn
+                from={{ opacity: 0, y: -14 }}
+                delay={0.1}
                 className="relative w-full overflow-hidden rounded-3xl border border-white/20 bg-[rgba(11,29,46,0.95)] px-10 py-6 text-center shadow-[0_20px_60px_rgba(1,17,27,0.5)]"
               >
                 {/* Subtle inner glow */}
@@ -348,27 +452,25 @@ export function StructureSection() {
                     {orgOverview.top.code}
                   </div>
                 </div>
-              </motion.div>
+              </AnimIn>
 
               {/* Drop from CIDTO to horizontal bar */}
-              <motion.div
-                initial={{ scaleY: 0, opacity: 0 }}
-                whileInView={{ scaleY: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.35, delay: 0.35, ease: "easeOut" }}
-                style={{ originY: 0 }}
+              <AnimIn
+                from={{ scaleY: 0, opacity: 0 }}
+                delay={0.35}
+                duration={0.35}
+                style={{ transformOrigin: "top" }}
                 className="h-10 w-px bg-[linear-gradient(180deg,rgba(255,255,255,0.35),rgba(255,255,255,0.15))]"
               />
 
               {/* ── Division row ─────────────────────────────────────────── */}
               <div className="relative w-full">
                 {/* Horizontal connector spanning all three columns */}
-                <motion.div
-                  initial={{ scaleX: 0, opacity: 0 }}
-                  whileInView={{ scaleX: 1, opacity: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.42, ease: "easeOut" }}
-                  style={{ originX: 0.5 }}
+                <AnimIn
+                  from={{ scaleX: 0, opacity: 0 }}
+                  delay={0.42}
+                  duration={0.5}
+                  style={{ transformOrigin: "center" }}
                   className="absolute top-0 left-[16.67%] right-[16.67%] h-px bg-[rgba(255,255,255,0.18)]"
                 />
 
@@ -376,66 +478,48 @@ export function StructureSection() {
 
                 {/* GTSD */}
                 <div className="flex flex-1 flex-col items-center">
-                  {/* vertical drop from horizontal bar */}
-                  <motion.div
-                    initial={{ scaleY: 0, opacity: 0 }}
-                    whileInView={{ scaleY: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.25, delay: 0.62, ease: "easeOut" }}
-                    style={{ originY: 0 }}
+                  <AnimIn
+                    from={{ scaleY: 0, opacity: 0 }}
+                    delay={0.62}
+                    duration={0.25}
+                    style={{ transformOrigin: "top" }}
                     className="h-10 w-px bg-[rgba(255,255,255,0.18)]"
                   />
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.38, delay: 0.72 }}
+                  <AnimIn
+                    from={{ opacity: 0, y: 10 }}
+                    delay={0.72}
+                    duration={0.38}
                     className="w-full rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.6)] px-6 py-5 text-center"
                   >
                     <span className="text-[10px] uppercase tracking-[0.22em] text-(--dim)">Division</span>
                     <div className="mt-1.5 text-2xl font-bold text-white">{orgOverview.divisions[0].code}</div>
                     <div className="mt-1 text-[10px] leading-4 text-(--dim)">{orgOverview.divisions[0].title}</div>
-                  </motion.div>
+                  </AnimIn>
                 </div>
 
                 {/* GDTD */}
                 <div className="flex flex-1 flex-col items-center">
-                  <motion.div
-                    initial={{ scaleY: 0, opacity: 0 }}
-                    whileInView={{ scaleY: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: 0.54, ease: "easeOut" }}
-                    style={{ originY: 0 }}
+                  <AnimIn
+                    from={{ scaleY: 0, opacity: 0 }}
+                    delay={0.54}
+                    duration={0.3}
+                    style={{ transformOrigin: "top" }}
                     className="h-10 w-px bg-[linear-gradient(180deg,rgba(0,180,216,0.8),rgba(0,180,216,0.4))]"
                   />
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.38, delay: 0.58 }}
+                  <AnimIn
+                    from={{ opacity: 0, y: 10 }}
+                    delay={0.58}
+                    duration={0.38}
                     className="w-full px-4"
                   >
-                    <motion.div
-                      animate={{
-                        boxShadow: [
-                          "0 0 18px 2px rgba(0,180,216,0.3)",
-                          "0 0 48px 10px rgba(0,180,216,0.75)",
-                          "0 0 18px 2px rgba(0,180,216,0.3)",
-                        ],
-                        borderColor: [
-                          "rgba(0,180,216,0.5)",
-                          "rgba(0,180,216,1)",
-                          "rgba(0,180,216,0.5)",
-                        ],
-                      }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    <div
+                      ref={gdtdBoxRef}
                       className="relative rounded-2xl border bg-[var(--navy)] px-6 py-5 text-center"
                     >
-                      <motion.span
+                      <span
+                        ref={gdtdRingRef}
                         aria-hidden="true"
                         className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-[var(--blue-lt)]"
-                        animate={{ opacity: [0.5, 0, 0.5], scale: [1, 1.12, 1] }}
-                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                       />
                       <span className="relative text-[10px] uppercase tracking-[0.22em] text-(--c-primary)">
                         That&apos;s us
@@ -446,32 +530,29 @@ export function StructureSection() {
                       <div className="relative mt-1 text-[10px] leading-4 text-(--c-primary)/60">
                         {orgOverview.divisions[1].title}
                       </div>
-                    </motion.div>
-                  </motion.div>
+                    </div>
+                  </AnimIn>
                 </div>
 
                 {/* DGMU */}
                 <div className="flex flex-1 flex-col items-center">
-                  {/* vertical drop from horizontal bar */}
-                  <motion.div
-                    initial={{ scaleY: 0, opacity: 0 }}
-                    whileInView={{ scaleY: 1, opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.25, delay: 0.62, ease: "easeOut" }}
-                    style={{ originY: 0 }}
+                  <AnimIn
+                    from={{ scaleY: 0, opacity: 0 }}
+                    delay={0.62}
+                    duration={0.25}
+                    style={{ transformOrigin: "top" }}
                     className="h-10 w-px bg-[rgba(255,255,255,0.18)]"
                   />
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.38, delay: 0.82 }}
+                  <AnimIn
+                    from={{ opacity: 0, y: 10 }}
+                    delay={0.82}
+                    duration={0.38}
                     className="w-full rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.6)] px-6 py-5 text-center"
                   >
                     <span className="text-[10px] uppercase tracking-[0.22em] text-(--dim)">Division</span>
                     <div className="mt-1.5 text-2xl font-bold text-white">{orgOverview.divisions[2].code}</div>
                     <div className="mt-1 text-[10px] leading-4 text-(--dim)">{orgOverview.divisions[2].title}</div>
-                  </motion.div>
+                  </AnimIn>
                 </div>
 
               </div>
@@ -508,11 +589,10 @@ export function StructureSection() {
                   return (
                     <div key={sm.name} className="flex flex-1 flex-col items-center">
                       {/* Arch connector */}
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true, amount: 0.5 }}
-                        transition={{ delay: 0.18, duration: 0.3 }}
+                      <AnimIn
+                        from={{ opacity: 0 }}
+                        delay={0.18}
+                        duration={0.3}
                         className={`h-8 w-full ${
                           isFirst && isLast
                             ? ""
@@ -535,16 +615,32 @@ export function StructureSection() {
                       </div>
 
                       {/* ── Level 2: Managers ─────────────────────────── */}
-                      <div className="w-full px-3 grid gap-3">
+                      <div className={`w-full px-2 grid gap-5 ${sm.managers.length > 3 ? "grid-cols-2" : "grid-cols-1"}`}>
                         {sm.managers.map((mgr, j) => (
-                          <ManagerCard
+                          <AnimIn
                             key={mgr.name}
-                            name={mgr.name}
-                            role={mgr.role}
-                            designation={mgr.designation}
-                            image={mgr.image}
+                            from={{ opacity: 0, y: 12, scale: 0.95 }}
                             delay={0.5 + i * 0.08 + j * 0.06}
-                          />
+                            duration={0.34}
+                            className="flex flex-col items-center gap-2.5 text-center"
+                          >
+                            <EngAvatar
+                              initials={mgr.name.split(" ").map((p) => p[0]).join("").slice(0, 2)}
+                              image={mgr.image}
+                              size="lg"
+                              accentColor="var(--blue-lt)"
+                              ringColor="rgba(0,150,199,0.35)"
+                            />
+                            <div className="w-full px-1">
+                              <div className="text-sm font-semibold leading-tight text-white">{mgr.name}</div>
+                              {mgr.designation && (
+                                <div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-(--c-primary)/80">{mgr.designation}</div>
+                              )}
+                              {mgr.role && (
+                                <div className="mt-0.5 text-[11px] font-medium leading-snug text-(--dim)">{mgr.role}</div>
+                              )}
+                            </div>
+                          </AnimIn>
                         ))}
                       </div>
                     </div>
@@ -566,11 +662,10 @@ export function StructureSection() {
               </div>
 
               {/* ── Pillar header ─────────────────────────────────────────── */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+              <AnimIn
+                from={{ opacity: 0 }}
+                delay={0.2}
+                duration={0.4}
                 className="mb-8 mt-6 flex items-baseline gap-4 border-b border-[rgba(255,255,255,0.07)] pb-4"
               >
                 <span className="tabular-nums text-sm font-medium uppercase tracking-[0.24em] text-(--dim)">
@@ -582,14 +677,13 @@ export function StructureSection() {
                 <span className="ml-auto text-xs font-medium uppercase tracking-[0.18em] text-(--dim)">
                   {engineeringTeams.length} teams
                 </span>
-              </motion.div>
+              </AnimIn>
 
               {/* ── Senior Manager card ───────────────────────────────────── */}
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              <AnimIn
+                from={{ opacity: 0, y: 14 }}
+                delay={0.25}
+                duration={0.5}
                 className="mx-auto mb-4 flex w-full max-w-[420px] flex-col items-center rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[var(--navy)] px-10 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
               >
                 <EngAvatar
@@ -606,7 +700,7 @@ export function StructureSection() {
                 >
                   Senior Manager, Group Engineering
                 </div>
-              </motion.div>
+              </AnimIn>
 
               {/* Vertical connector SM → unit cards */}
               <div className="mb-6 flex justify-center">
@@ -621,12 +715,11 @@ export function StructureSection() {
                   const leadInitials = lead ? lead.name.split(" ").map((p) => p[0]).join("").slice(0, 2) : "??";
 
                   return (
-                    <motion.div
+                    <AnimIn
                       key={team.name}
-                      initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ duration: 0.6, delay: 0.15 + i * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                      from={{ opacity: 0, y: 24 }}
+                      delay={0.15 + i * 0.1}
+                      duration={0.6}
                       className="group flex h-[460px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
                     >
                       {/* Header row: accent bar + short name */}
@@ -660,7 +753,7 @@ export function StructureSection() {
                           />
                           <div className="min-w-0">
                             <div className="truncate text-base font-semibold text-white">{lead.name}</div>
-                            <div className="text-sm text-(--muted)">Manager</div>
+                            <div className="text-sm text-(--muted)">{lead.role}, {lead.designation}</div>
                           </div>
                         </div>
                       )}
@@ -671,7 +764,7 @@ export function StructureSection() {
                           <p className="text-sm leading-7 text-(--light)">{team.message}</p>
                         </ScrollableDescription>
                       )}
-                    </motion.div>
+                    </AnimIn>
                   );
                 })}
               </div>
@@ -690,11 +783,10 @@ export function StructureSection() {
               </div>
 
               {/* ── Pillar header ─────────────────────────────────────────── */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true, amount: 0.5 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+              <AnimIn
+                from={{ opacity: 0 }}
+                delay={0.2}
+                duration={0.4}
                 className="mb-8 mt-6 flex items-baseline gap-4 border-b border-[rgba(255,255,255,0.07)] pb-4"
               >
                 <span className="tabular-nums text-sm font-medium uppercase tracking-[0.24em] text-(--dim)">
@@ -706,14 +798,13 @@ export function StructureSection() {
                 <span className="ml-auto text-xs font-medium uppercase tracking-[0.18em] text-(--dim)">
                   {digitalPlatformsTeam.managers.length} platform owners
                 </span>
-              </motion.div>
+              </AnimIn>
 
               {/* ── Senior Manager card ───────────────────────────────────── */}
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              <AnimIn
+                from={{ opacity: 0, y: 14 }}
+                delay={0.25}
+                duration={0.5}
                 className="mx-auto mb-4 flex w-full max-w-[420px] flex-col items-center rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[var(--navy)] px-10 py-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
               >
                 <EngAvatar
@@ -732,7 +823,7 @@ export function StructureSection() {
                     {digitalPlatformsTeam.seniorManager.message}
                   </p>
                 )}
-              </motion.div>
+              </AnimIn>
 
               {/* Vertical connector SM → platform owner cards */}
               <div className="mb-6 flex justify-center">
@@ -744,12 +835,11 @@ export function StructureSection() {
                 {digitalPlatformsTeam.managers.map((mgr, i) => {
                   const initials = mgr.name.split(" ").map((p) => p[0]).join("").slice(0, 2);
                   return (
-                    <motion.div
+                    <AnimIn
                       key={mgr.name}
-                      initial={{ opacity: 0, y: 24 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true, amount: 0.2 }}
-                      transition={{ duration: 0.6, delay: 0.15 + i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                      from={{ opacity: 0, y: 24 }}
+                      delay={0.15 + i * 0.08}
+                      duration={0.6}
                       className="group flex h-[560px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
                     >
                       {/* Header row: accent bar + platform badge */}
@@ -786,7 +876,7 @@ export function StructureSection() {
                           <p className="text-sm leading-7 text-(--light)">{mgr.message}</p>
                         </ScrollableDescription>
                       )}
-                    </motion.div>
+                    </AnimIn>
                   );
                 })}
               </div>
