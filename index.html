@@ -3,9 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Group Digital Technology Division | Republic Bank</title>
-    <meta name="description" content="A high-level profile of Republic Bank's Group Digital Technology Division." />
-    <link rel="icon" href="/favicon.ico" />
+    <title>GDTD Newsletter — Issue 01 / April 2026</title>
+    <meta name="description" content="Meet GDTD — Republic Bank's Group Digital Technology Division. A high-level profile of the division's structure, leadership, milestones, and capabilities." />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <script>
+      (function () {
+        var img = new Image();
+        img.onload = function () {
+          var size = 64;
+          var canvas = document.createElement("canvas");
+          canvas.width = canvas.height = size;
+          var ctx = canvas.getContext("2d");
+          ctx.beginPath();
+          ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+          ctx.closePath();
+          ctx.clip();
+          ctx.drawImage(img, 0, 0, size, size);
+          var link = document.querySelector("link[rel~='icon']");
+          link.type = "image/png";
+          link.href = canvas.toDataURL("image/png");
+        };
+        img.src = "/logo.png";
+      })();
+    </script>
+
+    <!-- Open Graph (Teams, Slack, email, link previews) -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:title"       content="GDTD Newsletter — Issue 01 / April 2026" />
+    <meta property="og:description" content="Meet GDTD — Republic Bank's Group Digital Technology Division. A high-level profile of the division's structure, leadership, milestones, and capabilities." />
+    <meta property="og:site_name"   content="Republic Bank | GDTD" />
+
+    <!-- Twitter / X card (fallback for other tools) -->
+    <meta name="twitter:card"        content="summary" />
+    <meta name="twitter:title"       content="GDTD Newsletter — Issue 01 / April 2026" />
+    <meta name="twitter:description" content="Meet GDTD — Republic Bank's Group Digital Technology Division." />
   </head>
   <body>
     <div id="root"></div>

@@ -33,10 +33,12 @@ function GmNode({ leader }: { leader: typeof gdtdStructure.leader }) {
 function SmCard({
   name,
   image,
+  role,
   delay,
 }: {
   name: string;
   image?: string;
+  role?: string;
   delay: number;
 }) {
   const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
@@ -61,7 +63,7 @@ function SmCard({
         <div>
           <div className="mt-1 text-sm font-semibold text-white">{name}</div>
           <div className="text-[9px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
-            Senior Manager
+            {role}
           </div>
         </div>
       </div>
@@ -73,11 +75,13 @@ function SmCard({
 function ManagerCard({
   name,
   role,
+  designation,
   image,
   delay,
 }: {
   name: string;
   role?: string;
+  designation?: string;
   image?: string;
   delay: number;
 }) {
@@ -99,7 +103,13 @@ function ManagerCard({
       />
       <div className="min-w-0">
         <div className="mt-1 truncate text-sm font-semibold text-white">{name}</div>
-        <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
+        {designation ? (
+          <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">
+            {designation}, {role}
+          </div>
+        ) : (
+          <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
+        )}
       </div>
     </motion.div>
   );
@@ -249,20 +259,21 @@ export function StructureSection() {
       string,
       {
         name: string;
+        role?: string;
         image?: string;
-        managers: Array<{ name: string; role?: string; image?: string; message?: string }>;
+        managers: Array<{ name: string; role?: string; designation?: string; image?: string; message?: string }>;
       }
     >();
 
     gdtdStructure.teams.forEach((team) => {
       const smName = team.seniorManager.name;
       if (!map.has(smName)) {
-        map.set(smName, { name: smName, image: team.seniorManager.image, managers: [] });
+        map.set(smName, { name: smName, role: team.seniorManager.role, image: team.seniorManager.image, managers: [] });
       }
       const sm = map.get(smName)!;
       team.managers.forEach((mgr) => {
         if (!sm.managers.find((m) => m.name === mgr.name)) {
-          sm.managers.push({ name: mgr.name, role: mgr.role, image: mgr.image, message: mgr.message });
+          sm.managers.push({ name: mgr.name, role: mgr.role, designation: mgr.designation, image: mgr.image, message: mgr.message });
         }
       });
     });
@@ -515,7 +526,7 @@ export function StructureSection() {
 
                       {/* SM card */}
                       <div className="w-full px-3">
-                        <SmCard name={sm.name} image={sm.image} delay={0.26 + i * 0.08} />
+                        <SmCard name={sm.name} role={sm.role} image={sm.image} delay={0.26 + i * 0.08} />
                       </div>
 
                       {/* Drop to manager row */}
@@ -530,6 +541,7 @@ export function StructureSection() {
                             key={mgr.name}
                             name={mgr.name}
                             role={mgr.role}
+                            designation={mgr.designation}
                             image={mgr.image}
                             delay={0.5 + i * 0.08 + j * 0.06}
                           />

@@ -36,7 +36,7 @@ export const gdtdStructure: GdtdStructure = {
       message: "Engineering Platforms ensure the Bank’s digital systems run reliably and securely, supporting online banking and internal services while delivering updates safely and in line with regulatory standards.",
       seniorManager: {
         name: "Dmytro Lavrinenko",
-        // role: "Senior Manager, Group Engineering",
+        role: "Senior Manager, Group Engineering",
         image: "/staff/dmytrolavrinenko.jpg",
         message: "",
       },
@@ -110,12 +110,12 @@ export const gdtdStructure: GdtdStructure = {
       message: "",
       seniorManager: {
         name: "David Kell",
-        // role: "Senior Manager",
+        role: "Senior Manager, Digital Platforms",
         image: "/staff/davidkell.png",
         // message: "David works with a team of Digital Platform Owners and IT Business Analysts within GTDT, as well as designers, architect engineers, product owners and stakeholders from all parts of the business representing all the markets served by Republic Bank.",
       },
       managers: [
-        { name: "Sasha Ramoutar", role: "Branch Digitalization", designation: "Digital Platform Owner", image: "/staff/sasharamoutar.png", message: "Sasha is leading the rollout of new digital tools in branches as part of the Bank’s digital transformation.Focusing on improving the customer journey and making daily work easier for branch staff, while supporting more efficient and modern branch operations." },
+        { name: "Sasha Ramoutar", role: "Branch Digitalization", designation: "Digital Product Owner", image: "/staff/sasharamoutar.png", message: "Sasha is leading the rollout of new digital tools in branches as part of the Bank’s digital transformation.Focusing on improving the customer journey and making daily work easier for branch staff, while supporting more efficient and modern branch operations." },
         { name: "Fahad Siddiqui", role: "Loan Management Platform", designation: "Product Owner", image: "/staff/fahadsiddiqui.png", message: "Fahad is leading the rollout of a group‑wide digital lending platform that enables faster, fully digital loan products across the Republic Group, replacing manual processes and supporting future growth." },
         { name: "Vasileios Kapralos", role: "Products", designation: "Digital Platform Owner", image: "/staff/vasileioskapralos.png", message: "Vasileios sets the long‑term vision and roadmap for the Bank’s mobile and app platforms, ensuring they support business goals, regulatory needs, and deliver secure, customer‑focused solutions across all markets." },
         { name: "Kosti Reshetniak", role: "Instant Payment System (IPS)", designation: "Digital Platform Owner", image: "/staff/kostireshetniak.png", message: "Kosti leads the Group‑wide instant payments work, delivering one shared system that makes sending and receiving money faster, easier,and more reliable for customers." },

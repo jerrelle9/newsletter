@@ -6,7 +6,9 @@ import { navItems } from "@/data/nav-items";
 
 export function SectionWheelNav() {
   const radius = 105;
-  const [activeHref, setActiveHref] = useState(navItems[0]?.href ?? "");
+  const [activeHref, setActiveHref] = useState(
+    () => window.location.hash || (navItems[0]?.href ?? "")
+  );
 
   const activeItem = useMemo(
     () => navItems.find((item) => item.href === activeHref) ?? navItems[0],
@@ -30,13 +32,26 @@ export function SectionWheelNav() {
     setWheelRotation(next);
   }, [activeIndex, step]);
 
-  // Prevent browser scroll-position restore on reload
+  // On load: scroll to the section in the URL hash, or go to top
   useEffect(() => {
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
     }
-    window.scrollTo(0, 0);
+    const hash = window.location.hash;
+    const target = hash ? document.querySelector(hash) : null;
+    if (target) {
+      target.scrollIntoView({ behavior: "instant" as ScrollBehavior });
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, []);
+
+  // Keep the URL hash in sync as the user scrolls
+  useEffect(() => {
+    if (activeHref) {
+      history.replaceState(null, "", activeHref);
+    }
+  }, [activeHref]);
 
   // Scroll-based detection
   useEffect(() => {
