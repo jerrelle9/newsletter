@@ -71,8 +71,8 @@ function SmCard({
   );
 }
 
-/* ─── Manager card ────────────────────────────────────────────────────────── */
-function ManagerCard({
+/* ─── Manager node (icon + name + role) ──────────────────────────────────── */
+function ManagerNode({
   name,
   role,
   designation,
@@ -89,26 +89,26 @@ function ManagerCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14, scale: 0.95 }}
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ delay, duration: 0.34, ease: [0.22, 1, 0.36, 1] }}
-      className="relative flex items-center gap-4 rounded-2xl border border-(--border) bg-[rgba(11,29,46,0.5)] p-4"
+      className="flex flex-col items-center gap-2.5 text-center"
     >
-      <OrgBubble
-        label={initials}
-        gradient="from-[var(--blue)] to-[var(--purple)]"
+      <EngAvatar
+        initials={initials}
         image={image}
-        size="md"
+        size="lg"
+        accentColor="var(--blue-lt)"
+        ringColor="rgba(0,150,199,0.35)"
       />
-      <div className="min-w-0">
-        <div className="mt-1 truncate text-sm font-semibold text-white">{name}</div>
-        {designation ? (
-          <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">
-            {designation}, {role}
-          </div>
-        ) : (
-          <div className="text-[10px] font-medium uppercase tracking-[0.22em] text-(--dim)">{role ?? "Manager"}</div>
+      <div className="w-full px-1">
+        <div className="text-sm font-semibold leading-tight text-white">{name}</div>
+        {designation && (
+          <div className="mt-0.5 text-[10px] font-medium leading-snug text-(--dim)">{designation}</div>
+        )}
+        {role && (
+          <div className="mt-0.5 text-[10px] font-medium leading-snug text-(--dim)">{role}</div>
         )}
       </div>
     </motion.div>
@@ -535,13 +535,13 @@ export function StructureSection() {
                       </div>
 
                       {/* ── Level 2: Managers ─────────────────────────── */}
-                      <div className="w-full px-3 grid gap-3">
+                      <div className={`w-full px-2 grid gap-4 ${sm.managers.length > 3 ? "grid-cols-2" : "grid-cols-3"}`}>
                         {sm.managers.map((mgr, j) => (
-                          <ManagerCard
+                          <ManagerNode
                             key={mgr.name}
                             name={mgr.name}
-                            role={mgr.role}
                             designation={mgr.designation}
+                            role={mgr.role}
                             image={mgr.image}
                             delay={0.5 + i * 0.08 + j * 0.06}
                           />
