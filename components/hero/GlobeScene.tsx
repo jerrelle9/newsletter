@@ -94,6 +94,48 @@ export function GlobeScene({ className = "" }: { className?: string }) {
     [],
   );
 
+  /* ── Clipping plane to hide rings / arcs on the far side ────── */
+  const clipPlane = useMemo(() => new THREE.Plane(), []);
+  const clipPlanes = useMemo(() => [clipPlane], [clipPlane]);
+  const [globeReady, setGlobeReady] = useState(false);
+
+  useEffect(() => {
+    if (!globeReady) return;
+    const g = globeRef.current;
+    if (!g) return;
+
+    const renderer = g.renderer();
+    renderer.localClippingEnabled = true;
+
+    const origin = new THREE.Vector3(0, 0, 0);
+    let frameId: number;
+
+    const update = () => {
+      const camera = g.camera();
+      if (camera) {
+        // Plane faces the camera, passes through globe center
+        const camDir = camera.position.clone().normalize();
+        clipPlane.setFromNormalAndCoplanarPoint(camDir, origin);
+      }
+
+      // Apply clipping to ring / arc materials (skip globe sphere & land dots)
+      g.scene().traverse((child: any) => {
+        if (child.isPoints) return;          // land dots
+        const mat = child.material;
+        if (!mat || mat === globeMaterial) return; // globe sphere
+        if (mat.clippingPlanes !== clipPlanes) {
+          mat.clippingPlanes = clipPlanes;
+          mat.needsUpdate = true;
+        }
+      });
+
+      frameId = requestAnimationFrame(update);
+    };
+
+    frameId = requestAnimationFrame(update);
+    return () => cancelAnimationFrame(frameId);
+  }, [globeReady, clipPlane, clipPlanes, globeMaterial]);
+
   /* ── Container size tracking ────────────────────────────────── */
   useEffect(() => {
     const el = containerRef.current;
@@ -132,6 +174,8 @@ export function GlobeScene({ className = "" }: { className?: string }) {
         return d;
       })(),
     ]);
+
+    setGlobeReady(true);
   }, []);
 
   /* ── HTML element factory for hotspot markers + hover cards ── */
