@@ -1,9 +1,6 @@
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
-import { Card, CardContent } from "@/components/ui/Card";
-import { stats } from "@/data/stats";
-
 const pillars = [
   {
     index: "01",
@@ -32,13 +29,6 @@ const pillars = [
     textClass: "text-[var(--green)]",
     borderClass: "border-[var(--green)]/18",
   },
-];
-
-const statNotes = [
-  "Skilled staff supporting the bank's digital and technology agenda.",
-  "Platforms and channels operated with reliability, speed, and visible ownership.",
-  "Regional operating breadth that demands strong architecture and disciplined execution.",
-  "Core capability pillars aligning engineering, architecture, service support, and change.",
 ];
 
 export function WhoWeAreSection() {
@@ -90,63 +80,31 @@ export function WhoWeAreSection() {
           ))}
         </Reveal>
 
-        {/* ── Two-column lower block ─────────────────────────────────────── */}
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+        {/* ── Mandate block ─────────────────────────────────────────────── */}
+        <Reveal className="mt-10 flex flex-col gap-6 max-w-2xl">
+          <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-8 backdrop-blur-xl">
+            <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
+              Our mandate
+            </div>
+            <blockquote className="mt-4 border-l-2 border-(--c-primary)/30 pl-5 text-base leading-8 text-(--light)">
+              By combining deep technical expertise with a strong execution mindset, GDTD
+              partners closely with business units to deliver enterprise-grade platforms, digital
+              products, and automation initiatives that drive efficiency, agility, and long-term
+              value for the RFHL Group.
+            </blockquote>
+          </div>
 
-          {/* Left — mandate statement */}
-          <Reveal className="flex flex-col gap-6">
-            <div className="rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-8 backdrop-blur-xl">
-              <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/70">
-                Our mandate
+          <div className="flex flex-wrap gap-2.5">
+            {["Platform engineering", "Digital channels", "Enterprise architecture", "Change support", "Automation"].map((tag) => (
+              <div
+                key={tag}
+                className="rounded-full border border-(--border) bg-[rgba(255,255,255,0.03)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--light)"
+              >
+                {tag}
               </div>
-              <blockquote className="mt-4 border-l-2 border-(--c-primary)/30 pl-5 text-base leading-8 text-(--light)">
-                By combining deep technical expertise with a strong execution mindset, GDTD
-                partners closely with business units to deliver enterprise-grade platforms, digital
-                products, and automation initiatives that drive efficiency, agility, and long-term
-                value for the RFHL Group.
-              </blockquote>
-            </div>
-
-            <div className="flex flex-wrap gap-2.5">
-              {["Platform engineering", "Digital channels", "Enterprise architecture", "Change support", "Automation"].map((tag) => (
-                <div
-                  key={tag}
-                  className="rounded-full border border-(--border) bg-[rgba(255,255,255,0.03)] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--light)"
-                >
-                  {tag}
-                </div>
-              ))}
-            </div>
-          </Reveal>
-
-          {/* Right — stats */}
-          <Reveal>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {stats.map((item, index) => (
-                <Card
-                  key={item.label}
-                  className="rounded-4xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] shadow-[0_18px_60px_rgba(1,10,24,0.35)] backdrop-blur-xl"
-                >
-                  <CardContent className="p-8">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-                      Signal 0{index + 1}
-                    </div>
-                    <div className={`text-5xl font-black ${item.color}`}>
-                      {item.value}
-                    </div>
-                    <div className="mt-3 text-[11px] font-medium uppercase tracking-[0.26em] text-(--muted)">
-                      {item.label}
-                    </div>
-                    <div className="mt-4 text-sm leading-7 text-(--light)">
-                      {statNotes[index]}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </Reveal>
-
-        </div>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </section>
   );

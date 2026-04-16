@@ -90,10 +90,21 @@ export function HeroSection() {
             RBL&apos;s
             <span className="block text-(--blue-lt)">technology engine.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-(--light) md:text-lg">
-            Group Digital Technology Division is Republic Bank&apos;s technology-focused
-            division, helping shape the systems, services, and digital experiences
-            that support customers and teams across the region.
+          <p className="mt-6 max-w-2xl text-base leading-10 text-(--light) md:text-lg">
+            {[
+              { letter: "G", rest: "roup" },
+              { letter: "D", rest: "igital" },
+              { letter: "T", rest: "echnology" },
+              { letter: "D", rest: "ivision" },
+            ].map(({ letter, rest }) => (
+              <span key={letter + rest} className="mr-2 inline-block whitespace-nowrap border-b border-[rgba(0,180,216,0.3)]">
+                <span className="text-[1.5em] font-black leading-none text-(--c-primary)">{letter}</span>
+                <span>{rest}</span>
+              </span>
+            ))}
+            {" "}is Republic Bank&apos;s technology-focused division, helping shape the
+            systems, services, and digital experiences that support customers and teams
+            across the region.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button className="px-6 py-3" onClick={() => handleJump("#section-5")}>

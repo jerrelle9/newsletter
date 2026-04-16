@@ -42,6 +42,7 @@ export const gdtdStructure: GdtdStructure = {
       },
       managers: [
         { name: "Adrian Lee", image: "staff/adrianlee2.png", 
+          role: "Engineering Platforms, Manager",
           message: "Engineering Platforms ensure the Bank’s digital systems work reliably behind the scenes. They maintain the technology foundation that allows online and mobile banking, internal systems, and other digital services to run smoothly, securely, and without interruption. The team also ensures that updates and improvements are delivered safely, securely, and efficiently, while protecting customer information and meeting the Bank’s regulatory standards.",
         },
        
@@ -72,7 +73,7 @@ export const gdtdStructure: GdtdStructure = {
       managers: [
         { name: "Nigel George", image: "/staff/nigelgeorge.jpg", 
           message: "Digital Banking & Support Systems is responsible for the operational stability, security, and continuous enhancement of the Bank’s digital banking platforms and supporting technology. This area of GDTD ensures high availability of Internet and Mobile Banking services while maintaining alignment with enterprise architecture, risk management, and regulatory standards, enabling secure and resilient customer-facing digital channels.",
-          // role: "",
+          role: "Digital Banking & Support Systems, Manager",
         },
         // { name: "Adrian Lee", image: "", message: "" },
       ],
@@ -92,7 +93,7 @@ export const gdtdStructure: GdtdStructure = {
         message: "",
       },
       managers: [
-        { name: "Kiran Ramlakhan", role: "Manager", image: "/staff/kiranramlakhan.png", 
+        { name: "Kiran Ramlakhan", role: "Engineering Products, Manager", image: "/staff/kiranramlakhan.png", 
           message: "Engineering Products is responsible for leading teams that build and improve the Bank’s systems, ensuring work is delivered to a high standard and supports the Bank’s overall goals. The area works closely with other departments, business partners, and senior leadership, while also managing people, budgets, and resources to deliver results effectively." 
         },
       ],

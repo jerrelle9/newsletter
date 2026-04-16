@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
@@ -105,6 +105,61 @@ function ManagerCard({
   );
 }
 
+
+/* ─── Scrollable description with overflow indicator ────────────────────── */
+function ScrollableDescription({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [hasOverflow, setHasOverflow] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const check = () => setHasOverflow(el.scrollHeight > el.clientHeight + 4);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const handleScroll = () => {
+    const el = ref.current;
+    if (!el) return;
+    setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 4);
+  };
+
+  return (
+    <div className="relative flex flex-1 flex-col overflow-hidden pt-2">
+      <div
+        ref={ref}
+        onScroll={handleScroll}
+        className="overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10 hover:[&::-webkit-scrollbar-thumb]:bg-white/25"
+      >
+        {children}
+      </div>
+
+      {/* Fade + scroll cue — only when overflow exists and not yet at bottom */}
+      <motion.div
+        animate={{ opacity: hasOverflow && !atBottom ? 1 : 0 }}
+        transition={{ duration: 0.25 }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col items-center justify-end gap-1 bg-gradient-to-t from-[var(--navy)] via-[var(--navy)]/80 to-transparent pb-1.5 pt-10"
+      >
+        <motion.div
+          animate={{ y: [0, 3, 0] }}
+          transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-0.5"
+        >
+          <div className="h-px w-4 bg-(--dim)/60" />
+          <div className="h-px w-3 bg-(--dim)/40" />
+          <div className="h-px w-2 bg-(--dim)/20" />
+        </motion.div>
+        <span className="text-[9px] font-medium uppercase tracking-[0.24em] text-(--dim)">
+          scroll
+        </span>
+      </motion.div>
+    </div>
+  );
+}
 
 /* ─── Engineering section: accent config ────────────────────────────────── */
 const ENG_TEAM_ACCENT: Record<string, { color: string; ring: string }> = {
@@ -593,16 +648,16 @@ export function StructureSection() {
                           />
                           <div className="min-w-0">
                             <div className="truncate text-base font-semibold text-white">{lead.name}</div>
-                            <div className="truncate text-sm text-(--muted)">{lead.role ?? "Manager"}</div>
+                            <div className="text-sm text-(--muted)">Manager</div>
                           </div>
                         </div>
                       )}
 
-                      {/* Description — centered vertically in remaining space */}
+                      {/* Description */}
                       {team.message && (
-                        <div className="flex flex-1 items-start overflow-y-auto pt-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+                        <ScrollableDescription>
                           <p className="text-sm leading-7 text-(--light)">{team.message}</p>
-                        </div>
+                        </ScrollableDescription>
                       )}
                     </motion.div>
                   );
@@ -713,11 +768,11 @@ export function StructureSection() {
                         </div>
                       </div>
 
-                      {/* Description — centered vertically in remaining space */}
+                      {/* Description */}
                       {mgr.message && (
-                        <div className="flex flex-1 items-start overflow-y-auto pt-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/10 hover:[&::-webkit-scrollbar-thumb]:bg-white/25">
+                        <ScrollableDescription>
                           <p className="text-sm leading-7 text-(--light)">{mgr.message}</p>
-                        </div>
+                        </ScrollableDescription>
                       )}
                     </motion.div>
                   );
