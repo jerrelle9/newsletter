@@ -1,6 +1,6 @@
 
 import React, { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { gsap, useGSAP } from "@/src/gsap-init";
 
 export function Reveal({
   children,
@@ -10,19 +10,33 @@ export function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const inView = useInView(ref, { once: true, amount: 0.2 });
+
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ref.current,
+        { opacity: 0, y: 28, scale: 0.98, filter: "blur(10px)" },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          filter: "blur(0px)",
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ref.current,
+            start: "top 88%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    },
+    { scope: ref }
+  );
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 28, scale: 0.98, filter: "blur(10px)" }}
-      animate={
-        inView ? { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" } : {}
-      }
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className={`will-change-transform ${className}`}
-    >
+    <div ref={ref} className={className}>
       {children}
-    </motion.div>
+    </div>
   );
 }

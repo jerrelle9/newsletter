@@ -1,101 +1,187 @@
 
-import { useMemo, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ChevronDown, ShieldCheck, Sparkles, Workflow } from "lucide-react";
+import { useRef, lazy, Suspense } from "react";
+import { gsap, SplitText, ScrollSmoother, ScrollTrigger, useGSAP } from "@/src/gsap-init";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
-import { stats } from "@/data/stats";
+import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
+
+const GlobeScene = lazy(() =>
+  import("@/components/hero/GlobeScene").then((m) => ({ default: m.GlobeScene }))
+);
 
 export function HeroSection() {
   const heroRef = useRef<HTMLDivElement | null>(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"],
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [0, 140]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.15]);
-
-  const floating = useMemo(
-    () => [
-      "top-20 left-[12%]",
-      "top-40 right-[16%]",
-      "bottom-24 left-[18%]",
-      "bottom-20 right-[10%]",
-      "top-1/2 left-[8%]",
-      "top-[58%] right-[22%]",
-    ],
-    []
-  );
-
-  const commandSignals = [
-    {
-      icon: Workflow,
-      label: "Technology leadership",
-      value: "Clear direction",
-    },
-    {
-      icon: ShieldCheck,
-      label: "Trusted services",
-      value: "Safe and reliable",
-    },
-    {
-      icon: Sparkles,
-      label: "Customer focus",
-      value: "Better everyday experiences",
-    },
-  ];
+  const scrollHintRef = useRef<HTMLDivElement>(null);
+  const meetRef = useRef<HTMLSpanElement>(null);
+  const gdtdRef = useRef<HTMLSpanElement>(null);
+  const taglineRef = useRef<HTMLSpanElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   const handleJump = (selector: string) => {
-    document.querySelector(selector)?.scrollIntoView({ behavior: "smooth" });
+    const smoother = ScrollSmoother.get();
+    if (smoother) {
+      smoother.scrollTo(selector, true, "top top");
+    } else {
+      document.querySelector(selector)?.scrollIntoView({ behavior: "smooth" });
+    }
   };
+
+  /* ── GSAP: orchestrated hero entrance timeline ────────────────── */
+  useGSAP(() => {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top bottom",
+        end: "bottom top",
+        toggleActions: "play none restart none",
+      },
+    });
+
+    // "MEET" — chars stagger in
+    if (meetRef.current) {
+      const meetSplit = SplitText.create(meetRef.current, { type: "chars" });
+      tl.from(meetSplit.chars, {
+        y: 30,
+        opacity: 0,
+        stagger: 0.05,
+        duration: 0.5,
+        ease: "power3.out",
+      }, 0);
+    }
+
+    // "GDTD" — large outlined chars scale in
+    if (gdtdRef.current) {
+      const gdtdSplit = SplitText.create(gdtdRef.current, { type: "chars" });
+      tl.from(gdtdSplit.chars, {
+        scale: 0,
+        opacity: 0,
+        stagger: 0.08,
+        duration: 0.7,
+        ease: "back.out(1.7)",
+      }, 0.2);
+    }
+
+    // Tagline — chars slide up with mask reveal
+    if (taglineRef.current) {
+      const tagSplit = SplitText.create(taglineRef.current, {
+        type: "chars",
+        mask: "chars",
+      });
+      tl.from(tagSplit.chars, {
+        yPercent: 110,
+        stagger: 0.03,
+        duration: 0.5,
+        ease: "power3.out",
+      }, 0.5);
+    }
+
+    // Subtitle paragraph — words mask-reveal
+    if (subtitleRef.current) {
+      const subSplit = SplitText.create(subtitleRef.current, {
+        type: "words",
+        mask: "words",
+      });
+      tl.from(subSplit.words, {
+        yPercent: 100,
+        duration: 0.5,
+        stagger: 0.02,
+        ease: "power3.out",
+      }, 0.75);
+    }
+
+    // CTA buttons - slide up
+    if (ctaRef.current) {
+      tl.from(ctaRef.current.children, {
+        y: 20,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.4,
+        ease: "power2.out",
+      }, 0.95);
+    }
+
+    // Scroll hint — fade in
+    if (scrollHintRef.current) {
+      tl.from(scrollHintRef.current, {
+        y: 15,
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.out",
+      }, 1.1);
+    }
+  }, { scope: heroRef });
+
+  /* ── GSAP: scroll hint bounce ─────────────────────────────────── */
+  useGSAP(() => {
+    if (scrollHintRef.current) {
+      gsap.to(scrollHintRef.current, {
+        y: 6,
+        duration: 1.2,
+        ease: "sine.inOut",
+        repeat: -1,
+        yoyo: true,
+        delay: 1.6,
+      });
+    }
+  }, { scope: heroRef });
+
 
   return (
     <section
       id="section-1"
       ref={heroRef}
-      className="relative flex min-h-screen items-center overflow-hidden border-b border-(--border) bg-[radial-gradient(circle_at_14%_12%,rgba(0,180,216,0.16),transparent_20%),radial-gradient(circle_at_88%_22%,rgba(139,92,246,0.14),transparent_24%),linear-gradient(180deg,var(--navy)_0%,var(--navy2)_52%,#00111b_100%)] pt-16"
+      className="relative flex min-h-screen flex-col items-center justify-start overflow-hidden border-b border-(--border) bg-[radial-gradient(circle_at_14%_12%,rgba(0,180,216,0.16),transparent_20%),radial-gradient(circle_at_88%_22%,rgba(139,92,246,0.14),transparent_24%),linear-gradient(180deg,var(--navy)_0%,var(--navy2)_52%,#00111b_100%)]"
     >
       <SectionNumber number="01" />
 
-      <motion.div style={{ y, opacity }} className="absolute inset-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-size-[64px_64px] opacity-25" />
-        <div className="absolute left-[12%] top-[22%] h-56 w-56 rounded-full border border-[rgba(0,180,216,0.14)]" />
-        <div className="absolute right-[18%] top-[18%] h-72 w-72 rounded-full border border-(--border)" />
-        {floating.map((pos, i) => (
-          <motion.div
-            key={pos}
-            className={`absolute ${pos}`}
-            animate={{ y: [0, -12, 0], opacity: [0.45, 0.8, 0.45] }}
-            transition={{ duration: 5 + i, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <div className="h-3 w-3 rounded-full bg-(--teal) shadow-[0_0_32px_rgba(0,180,216,0.7)]" />
-          </motion.div>
-        ))}
-      </motion.div>
+      {/* Subtle perspective grid (kontenta-style background) */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(180,180,220,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(180,180,220,0.5) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+        }}
+      />
 
-      <div className="relative ml-[8vw] grid w-full max-w-[66vw] gap-12 px-6 py-24 md:px-10 lg:grid-cols-[1.04fr_0.96fr] lg:items-center lg:px-16">
-        <Reveal className="max-w-3xl">
-          {/* <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-[rgba(0,180,216,0.16)] bg-[rgba(0,180,216,0.1)] px-4 py-2 text-[11px] uppercase tracking-[0.34em] text-(--blue-lt) backdrop-blur-xl">
-            <span className="h-2 w-2 rounded-full bg-(--teal) shadow-[0_0_18px_rgba(0,180,216,0.85)]" />
-            Issue 01 / GTD / Republic Bank
-          </div> */}
-          <h1 className="max-w-2xl text-3xl font-black leading-[0.88] tracking-[-0.04em] md:text-5xl xl:text-[3.6rem]">
-            <span className="block text-(--light)">MEET</span>
-            <span className="block mt-4 mb-4 text-center xl:text-[8.6rem] text-transparent [-webkit-text-stroke:1px_rgba(0,180,230,0.9)]">
+      {/* Galaxy background — floating dots, rings, grid */}
+      <GalaxyBackground />
+
+      {/* Three.js Globe — deferred to keep hero text animations smooth */}
+      <div className="absolute inset-0 z-0" data-speed="0.85">
+        <Suspense fallback={null}>
+          <GlobeScene className="h-full w-full" />
+        </Suspense>
+      </div>
+
+      {/* Centered text content — overlays the globe */}
+      <div className="relative z-10 mt-[12vh] flex flex-col items-center px-6 text-center">
+        <div className="flex flex-col items-center">
+          <h1 className="font-black leading-[0.88] tracking-[-0.04em]">
+            <span ref={meetRef} className="block text-[clamp(2rem,6vw,4.5rem)] text-(--light)">
+              MEET
+            </span>
+            <span ref={gdtdRef} className="block my-2 text-[clamp(5rem,15vw,12rem)] text-transparent [-webkit-text-stroke:2px_rgba(0,180,230,0.85)]">
               GDTD
             </span>
-            RBL&apos;s
-            <span className="block text-(--blue-lt)">technology engine.</span>
+            <span ref={taglineRef} className="block pb-4 leading-normal text-[clamp(1.1rem,2.8vw,2rem)] font-bold tracking-[0.06em]">
+              <span className="relative inline-block text-(--white) drop-shadow-[0_0_18px_rgba(0,180,216,0.5)]">
+                RBL&apos;s
+              </span>
+              {" "}
+              <span className="text-(--blue-lt)">technology engine.</span>
+            </span>
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-(--light) md:text-lg">
+
+          <p ref={subtitleRef} className="mt-6 max-w-xl rounded-lg px-4 py-3 text-sm leading-7 text-white/90 drop-shadow-[0_1px_8px_rgba(0,0,0,0.9)] md:text-base" style={{ textShadow: '0 1px 12px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.6)' }}>
             Group Digital Technology Division is Republic Bank&apos;s technology-focused
             division, helping shape the systems, services, and digital experiences
             that support customers and teams across the region.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+
+          <div ref={ctaRef} className="mt-8 flex flex-wrap justify-center gap-3">
             <Button className="px-6 py-3" onClick={() => handleJump("#section-5")}>
               Explore GDTD
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -108,115 +194,19 @@ export function HeroSection() {
               View structure
             </Button>
           </div>
+        </div>
+      </div>
 
-          <div className="mt-10 grid gap-3 sm:grid-cols-3">
-            {commandSignals.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.label}
-                  className="rounded-3xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-4 backdrop-blur-xl"
-                >
-                  <div className="flex items-center gap-3 text-(--c-primary)">
-                    <div className="shrink-0 rounded-2xl border border-(--c-primary)/18 bg-(--c-primary)/10 p-2.5">
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-                      {item.label}
-                    </div>
-                  </div>
-                  <div className="mt-4 text-base font-semibold text-white">
-                    {item.value}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-10 flex items-center gap-3 text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
-            <ChevronDown className="h-4 w-4" />
-            Scroll to enter the command layer
-          </div>
-        </Reveal>
-
-        <Reveal className="relative lg:justify-self-end">
-          <motion.div
-            className="absolute -right-10 top-10 h-48 w-48 rounded-full bg-[rgba(139,92,246,0.14)] blur-3xl"
-            animate={{ scale: [1, 1.08, 1], opacity: [0.35, 0.6, 0.35] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <Card className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.78)] shadow-[0_35px_140px_rgba(1,17,27,0.78)] backdrop-blur-2xl">
-            <CardContent className="relative p-6 md:p-8">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(79,209,255,0.18),transparent_26%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.01))]" />
-              <div className="relative">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-primary)/80">
-                      Command center snapshot
-                    </div>
-                    <h2 className="mt-3 text-2xl font-bold tracking-[-0.02em] text-white">
-                      Technology leadership across the Division.
-                    </h2>
-                  </div>
-                  <div className="rounded-full border border-(--c-accent)/18 bg-(--c-accent)/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-accent)">
-                    live posture
-                  </div>
-                </div>
-
-                <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                  {stats.map((item, index) => (
-                    <div
-                      key={item.label}
-                      className="rounded-3xl border border-(--border) bg-[rgba(15,36,56,0.72)] p-5"
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className={`text-3xl font-black ${item.color}`}>
-                          {item.value}
-                        </div>
-                        <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-                          0{index + 1}
-                        </div>
-                      </div>
-                      <div className="mt-2 text-[11px] font-medium uppercase tracking-[0.26em] text-(--muted)">
-                        {item.label}
-                      </div>
-                      <div className="mt-4 h-1.5 rounded-full bg-white/6">
-                        <div
-                          className="h-full rounded-full bg-[linear-gradient(90deg,rgba(91,221,255,0.95),rgba(24,152,255,0.95))]"
-                          style={{ width: `${68 + index * 7}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 grid gap-4 md:grid-cols-[1.15fr_0.85fr]">
-                  <div className="rounded-3xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-5">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
-                      Why it matters
-                    </div>
-                    <p className="mt-3 text-sm leading-7 text-(--light)">
-                      The Group Digital Technology Division helps connect business goals,
-                      customer needs, and trusted technology services so the bank can move
-                      forward with confidence.
-                    </p>
-                  </div>
-
-                  <div className="rounded-3xl border border-(--c-secondary)/18 bg-(--c-secondary)/10 p-5">
-                    <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--c-secondary)/90">
-                      Operating signal
-                    </div>
-                    <div className="mt-3 text-2xl font-bold tracking-[-0.02em] text-white">
-                      Always-ready,
-                      <span className="block text-(--c-secondary)">future-focused support.</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Reveal>
+      {/* Scroll hint — pinned to bottom */}
+      <div className="absolute bottom-8 left-0 right-0 z-10 flex justify-center">
+        <div
+          ref={scrollHintRef}
+          className="flex items-center gap-3 rounded-full border border-white/20 bg-black/40 px-5 py-2 text-xs font-medium uppercase tracking-[0.3em] text-white/90 backdrop-blur-sm"
+          style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
+        >
+          <ChevronDown className="h-4 w-4" />
+          Scroll to enter the command layer / Drag globe to explore
+        </div>
       </div>
     </section>
   );

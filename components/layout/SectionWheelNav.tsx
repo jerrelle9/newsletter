@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { gsap, ScrollSmoother, useGSAP } from "@/src/gsap-init";
 import { navItems } from "@/data/nav-items";
 
 export function SectionWheelNav() {
   const radius = 105;
   const [activeHref, setActiveHref] = useState(navItems[0]?.href ?? "");
+  const [isHovered, setIsHovered] = useState(false);
+  const [onHero, setOnHero] = useState(true);
+
+  const opacity = onHero && !isHovered ? 0.2 : 1;
 
   const activeItem = useMemo(
     () => navItems.find((item) => item.href === activeHref) ?? navItems[0],
@@ -20,10 +24,14 @@ export function SectionWheelNav() {
   const targetRotationRef = useRef(0);
   const [wheelRotation, setWheelRotation] = useState(0);
 
+  // Refs for GSAP targets
+  const ringRef = useRef<HTMLDivElement>(null);
+  const triangleRef = useRef<HTMLDivElement>(null);
+  const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   useEffect(() => {
     const rawTarget = -(step * activeIndex);
     const current = targetRotationRef.current;
-    // Shortest-path delta — keep within ±180°
     let delta = ((rawTarget - (current % 360) + 540) % 360) - 180;
     const next = current + delta;
     targetRotationRef.current = next;
@@ -38,7 +46,20 @@ export function SectionWheelNav() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Scroll-based detection
+  // Track whether we're on the hero section
+  useEffect(() => {
+    const update = () => {
+      const hero = document.getElementById("section-1");
+      if (!hero) return;
+      const rect = hero.getBoundingClientRect();
+      setOnHero(rect.bottom > window.innerHeight * 0.2);
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
+  // Scroll-based section detection
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -54,10 +75,54 @@ export function SectionWheelNav() {
     return () => observer.disconnect();
   }, []);
 
-  const handleClick = (href: string) => setActiveHref(href);
+  // GSAP: Animate wheel + counter-rotating labels on rotation change
+  useGSAP(() => {
+    if (!ringRef.current) return;
+    gsap.to(ringRef.current, {
+      rotation: wheelRotation,
+      duration: 0.7,
+      ease: "back.out(1.4)",
+    });
+    labelRefs.current.forEach((el) => {
+      if (!el) return;
+      gsap.to(el, {
+        rotation: -wheelRotation,
+        duration: 0.7,
+        ease: "back.out(1.4)",
+      });
+    });
+  }, { dependencies: [wheelRotation] });
+
+  // GSAP: Triangle pulse
+  useGSAP(() => {
+    if (!triangleRef.current) return;
+    gsap.to(triangleRef.current, {
+      opacity: 1,
+      duration: 0.9,
+      ease: "sine.inOut",
+      repeat: -1,
+      yoyo: true,
+    });
+  }, {});
+
+  const handleClick = (href: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    setActiveHref(href);
+    const smoother = ScrollSmoother.get();
+    if (smoother) {
+      smoother.scrollTo(href, true, "top top");
+    } else {
+      gsap.to(window, { scrollTo: { y: href, offsetY: 0 }, duration: 1, ease: "power2.inOut" });
+    }
+  };
 
   return (
-    <div className="fixed right-[calc(13vw-160px)] top-1/2 z-40 hidden -translate-y-1/2 lg:flex">
+    <div
+      className="fixed right-[calc(13vw-160px)] top-1/2 z-40 hidden -translate-y-1/2 lg:flex"
+      style={{ opacity, transition: "opacity 0.6s ease" }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative flex items-center">
         <div className="relative h-[320px] w-[320px]">
 
@@ -66,20 +131,15 @@ export function SectionWheelNav() {
 
           {/* Downward-pointing triangle indicator at the top */}
           <div className="absolute left-1/2 -top-4 z-20 -translate-x-1/2">
-            <motion.div
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-              style={{ clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)" }}
+            <div
+              ref={triangleRef}
+              style={{ clipPath: "polygon(50% 100%, 0% 0%, 100% 0%)", opacity: 0.7 }}
               className="h-4 w-5 bg-[var(--teal)] shadow-[0_0_14px_4px_rgba(0,180,216,0.7)]"
             />
           </div>
 
           {/* Rotating ring */}
-          <motion.div
-            className="absolute inset-0"
-            animate={{ rotate: wheelRotation }}
-            transition={{ type: "spring", stiffness: 180, damping: 28 }}
-          >
+          <div ref={ringRef} className="absolute inset-0" style={{ transformOrigin: "50% 50%" }}>
             {navItems.map((item, index) => {
               const angle = -90 + step * index;
               const radians = (angle * Math.PI) / 180;
@@ -91,16 +151,16 @@ export function SectionWheelNav() {
                 <a
                   key={item.label}
                   href={item.href}
-                  onClick={() => handleClick(item.href)}
+                  onClick={(e) => handleClick(item.href, e)}
                   className="absolute left-1/2 top-1/2"
                   aria-current={isActive ? "page" : undefined}
                   style={{ transform: `translate(${x}px, ${y}px) translate(-50%, -50%)` }}
                 >
                   {/* Counter-rotate each label so it stays upright */}
-                  <motion.div
+                  <div
+                    ref={(el) => { labelRefs.current[index] = el; }}
                     className="group/item flex w-[110px] flex-col items-center text-center"
-                    animate={{ rotate: -wheelRotation }}
-                    transition={{ type: "spring", stiffness: 180, damping: 28 }}
+                    style={{ transformOrigin: "50% 50%" }}
                   >
                     <div
                       className={`mb-1.5 h-3 w-3 rounded-full border transition-all duration-200 ${
@@ -116,11 +176,11 @@ export function SectionWheelNav() {
                     >
                       {item.label}
                     </span>
-                  </motion.div>
+                  </div>
                 </a>
               );
             })}
-          </motion.div>
+          </div>
 
           {/* Centre display */}
           <div className="absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[rgba(0,180,216,0.16)] bg-[radial-gradient(circle_at_top,rgba(2,48,74,0.98),rgba(1,29,46,1))] text-center shadow-[inset_0_1px_18px_rgba(255,255,255,0.06)]">
@@ -142,3 +202,5 @@ export function SectionWheelNav() {
     </div>
   );
 }
+
+

@@ -1,6 +1,7 @@
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { gsap, ScrollTrigger, useGSAP } from "@/src/gsap-init";
 import type { LucideIcon } from "lucide-react";
+
 import {
   Server,
   Smartphone,
@@ -13,6 +14,7 @@ import {
 } from "lucide-react";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Reveal } from "@/components/layout/Reveal";
+import { SplitHeading } from "@/components/layout/SplitHeading";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { milestones, type Milestone, type MilestoneCategory } from "@/data/milestones";
 
@@ -87,24 +89,35 @@ function TimelineSpine({
   containerRef,
   className,
 }: {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   className: string;
 }) {
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start 80%", "end 20%"],
-  });
-  const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const fillRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!fillRef.current || !containerRef.current) return;
+    gsap.set(fillRef.current, { scaleY: 0 });
+    gsap.to(fillRef.current, {
+      scaleY: 1,
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 80%",
+        end: "bottom 20%",
+        scrub: 0.3,
+      },
+    });
+  }, { scope: wrapRef });
 
   return (
-    <div className={`pointer-events-none absolute ${className}`}>
+    <div ref={wrapRef} className={`pointer-events-none absolute ${className}`}>
       <div className="relative h-full w-px">
-        {/* Faint track */}
         <div className="absolute inset-0 bg-[rgba(255,255,255,0.06)]" />
-        {/* Animated glowing fill */}
-        <motion.div
+        <div
+          ref={fillRef}
           className="absolute inset-0 origin-top bg-[linear-gradient(180deg,var(--teal),var(--blue-lt),var(--purple))]"
-          style={{ scaleY, boxShadow: "0 0 12px 2px rgba(0,180,216,0.45)" }}
+          style={{ boxShadow: "0 0 12px 2px rgba(0,180,216,0.45)" }}
         />
       </div>
     </div>
@@ -114,31 +127,61 @@ function TimelineSpine({
 /* ─── Timeline node dot ───────────────────────────────────────────────────── */
 function TimelineNode({ color }: { color: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const pulseRef = useRef<HTMLDivElement>(null);
+  const coreRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!ref.current) return;
+    // Core dot entrance
+    gsap.fromTo(
+      coreRef.current,
+      { scale: 0, opacity: 0 },
+      {
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+    // Pulse ring
+    gsap.fromTo(
+      pulseRef.current,
+      { scale: 1, opacity: 0.6 },
+      {
+        scale: 1.6,
+        opacity: 0,
+        duration: 2.4,
+        ease: "sine.inOut",
+        repeat: -1,
+        delay: 0.6,
+        scrollTrigger: {
+          trigger: ref.current,
+          start: "top 85%",
+          toggleActions: "play pause resume pause",
+        },
+      }
+    );
+  }, { scope: ref });
 
   return (
     <div
       ref={ref}
       className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center"
     >
-      {/* Pulse ring */}
-      <motion.div
+      <div
+        ref={pulseRef}
         className="absolute h-10 w-10 rounded-full"
         style={{ border: `1px solid ${color}` }}
-        animate={
-          inView
-            ? { scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }
-            : { scale: 1, opacity: 0 }
-        }
-        transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
       />
-      {/* Core dot */}
-      <motion.div
+      <div
+        ref={coreRef}
         className="h-3 w-3 rounded-full"
         style={{ background: color, boxShadow: `0 0 18px 4px ${color}` }}
-        initial={{ scale: 0, opacity: 0 }}
-        animate={inView ? { scale: 1, opacity: 1 } : {}}
-        transition={{ type: "spring", stiffness: 220, damping: 20, delay: 0.2 }}
       />
     </div>
   );
@@ -152,20 +195,35 @@ function HorizontalBridge({
   color: string;
   direction: "left" | "right";
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (!ref.current) return;
+    gsap.set(ref.current, { scaleX: 0, opacity: 0 });
+    gsap.to(ref.current, {
+      scaleX: 1,
+      opacity: 1,
+      duration: 0.4,
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: ref.current,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+  }, { scope: ref });
+
   return (
-    <motion.div
+    <div
+      ref={ref}
       className="h-px w-10 shrink-0"
       style={{
         background:
           direction === "left"
             ? `linear-gradient(90deg, transparent, ${color})`
             : `linear-gradient(90deg, ${color}, transparent)`,
-        originX: direction === "left" ? 1 : 0,
+        transformOrigin: direction === "left" ? "right" : "left",
       }}
-      initial={{ scaleX: 0, opacity: 0 }}
-      whileInView={{ scaleX: 1, opacity: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.4, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
     />
   );
 }
@@ -237,9 +295,14 @@ export function MilestoneSection() {
           <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Milestones
           </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
+          <SplitHeading
+            as="h2"
+            className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl"
+            splitType="words"
+            stagger={0.04}
+          >
             A record of what the Division has shipped, scaled, and set in motion.
-          </h2>
+          </SplitHeading>
           <p className="mt-6 text-base leading-8 text-(--light)">
             From platform stabilisation to live product launches, these are the delivery
             signals that mark GDTD&apos;s progress across quarters.

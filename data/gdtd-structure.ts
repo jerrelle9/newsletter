@@ -40,7 +40,7 @@ export const gdtdStructure: GdtdStructure = {
         message: "",
       },
       managers: [
-        { name: "Adrian Lee", image: "staff/adrianlee2.png", message: "Adrian provides leadership for the Technology Platforms Engineering teams, managing DevOps and DevSecOps functions aligned with organizational strategy. His responsibilities include cloud infrastructure management, automated delivery pipelines, and integrated security controls across the development lifecycle." },
+        { name: "Adrian Lee", image: "/staff/adrianlee2.png", message: "Adrian provides leadership for the Technology Platforms Engineering teams, managing DevOps and DevSecOps functions aligned with organizational strategy. His responsibilities include cloud infrastructure management, automated delivery pipelines, and integrated security controls across the development lifecycle." },
        
       ],
       reports: [

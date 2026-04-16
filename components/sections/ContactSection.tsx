@@ -1,6 +1,7 @@
 import { ArrowRight, Mail, MessageSquare, PhoneCall } from "lucide-react";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Reveal } from "@/components/layout/Reveal";
+import { SplitHeading } from "@/components/layout/SplitHeading";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { Card, CardContent } from "@/components/ui/Card";
 
@@ -36,9 +37,14 @@ export function ContactSection() {
           <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
             Reach out
           </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
+          <SplitHeading
+            as="h2"
+            className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl"
+            splitType="words"
+            stagger={0.04}
+          >
             Engage the department building the bank&apos;s next capabilities.
-          </h2>
+          </SplitHeading>
           <p className="mt-6 text-base leading-8 text-(--light)">
             This is your channel to GDTD's fast routing channels with confidence
             that the right people will pick up the work.

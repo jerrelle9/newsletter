@@ -1,4 +1,7 @@
+import { useRef } from "react";
+import { gsap, ScrollTrigger, useGSAP } from "@/src/gsap-init";
 import { Reveal } from "@/components/layout/Reveal";
+import { SplitHeading } from "@/components/layout/SplitHeading";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -42,6 +45,34 @@ const statNotes = [
 ];
 
 export function WhoWeAreSection() {
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  /* ── Stat counter animation ───────────────────────────────────── */
+  useGSAP(() => {
+    if (!statsRef.current) return;
+    const counters = statsRef.current.querySelectorAll<HTMLElement>(".stat-value");
+    counters.forEach((el) => {
+      const raw = el.dataset.value ?? "0";
+      const num = parseInt(raw, 10);
+      const suffix = raw.replace(/[0-9]/g, "");
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: num,
+        duration: 1.8,
+        ease: "power2.out",
+        snap: { val: 1 },
+        scrollTrigger: {
+          trigger: el,
+          start: "top 95%",
+          toggleActions: "play none restart none",
+        },
+        onUpdate() {
+          el.textContent = `${obj.val}${suffix}`;
+        },
+      });
+    });
+  }, { scope: statsRef });
+
   return (
     <section
       id="section-2"
@@ -52,14 +83,20 @@ export function WhoWeAreSection() {
 
       <div className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
 
+        <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
+          Who we are
+        </div>
         {/* ── Section header ─────────────────────────────────────────────── */}
-        <Reveal className="max-w-3xl">
-          <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
-            Who we are
-          </div>
-          <h2 className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl">
+        <Reveal className="mt-8 max-w-3xl">
+          <SplitHeading
+            as="h2"
+            className="mt-4 text-4xl font-black leading-[0.9] tracking-[-0.04em] md:text-5xl"
+            splitType="words"
+            stagger={0.04}
+            duration={0.7}
+          >
             The central execution arm for digital innovation across the Group.
-          </h2>
+          </SplitHeading>
           <p className="mt-6 text-base leading-8 text-(--light)">
             The Group Digital Technology Division was established as one of the pillars of the
             RFHL Group&apos;s Digital Transformation journey, formed to translate strategic ambition
@@ -121,7 +158,7 @@ export function WhoWeAreSection() {
 
           {/* Right — stats */}
           <Reveal>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div ref={statsRef} className="grid gap-4 sm:grid-cols-2">
               {stats.map((item, index) => (
                 <Card
                   key={item.label}
@@ -131,8 +168,8 @@ export function WhoWeAreSection() {
                     <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
                       Signal 0{index + 1}
                     </div>
-                    <div className={`text-5xl font-black ${item.color}`}>
-                      {item.value}
+                    <div className={`stat-value text-5xl font-black ${item.color}`} data-value={item.value}>
+                      0
                     </div>
                     <div className="mt-3 text-[11px] font-medium uppercase tracking-[0.26em] text-(--muted)">
                       {item.label}

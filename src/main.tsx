@@ -8,6 +8,7 @@ import "@fontsource/ibm-plex-mono/500.css";
 import "@fontsource/ibm-plex-mono/600.css";
 import "../app/globals.css";
 import "../app/page.module.css";
+import "./gsap-init";
 import App from "./App";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

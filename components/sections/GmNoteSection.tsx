@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { gsap, useGSAP } from "@/src/gsap-init";
 import { Reveal } from "@/components/layout/Reveal";
 import { SectionNumber } from "@/components/layout/SectionNumber";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
@@ -10,23 +11,69 @@ export function GmNoteSection() {
   const values = ["Clarity", "Execution", "Trust", "Regional scale"];
   const { leader } = gdtdStructure;
   const [imgFailed, setImgFailed] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+  const noteCardRef = useRef<HTMLDivElement>(null);
+  const sideCardsRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    // Main note card — scrub-linked slide from left
+    if (noteCardRef.current) {
+      gsap.fromTo(noteCardRef.current,
+        { x: -60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: noteCardRef.current,
+            start: "top 90%",
+            end: "top 40%",
+            scrub: 0.3,
+          },
+        },
+      );
+    }
+
+    // Side cards — scrub-linked stagger from right
+    if (sideCardsRef.current) {
+      const cards = sideCardsRef.current.children;
+      gsap.fromTo(cards,
+        { x: 60, opacity: 0 },
+        {
+          x: 0,
+          opacity: 1,
+          stagger: 0.1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sideCardsRef.current,
+            start: "top 90%",
+            end: "top 40%",
+            scrub: 0.3,
+          },
+        },
+      );
+    }
+  }, { scope: sectionRef });
 
   return (
     <section
       id="section-3"
+      ref={sectionRef}
       className="relative min-h-screen border-b border-(--border) bg-[radial-gradient(circle_at_20%_24%,rgba(0,180,216,0.12),transparent_20%),linear-gradient(180deg,var(--navy)_0%,var(--surface)_100%)]"
     >
       <GalaxyBackground />
       <SectionNumber number="03" />
 
-      <div className="ml-[8vw] grid min-h-screen max-w-[66vw] gap-10 px-6 py-24 md:px-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center lg:px-16">
-        <Reveal className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_90px_rgba(1,17,27,0.52)] backdrop-blur-2xl md:p-10">
+      <div className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16">
+
+        <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70" data-speed="1">
+          A note from our GM
+        </div>
+
+        <div className="mt-8 grid min-h-[calc(100vh-12rem)] gap-10 lg:grid-cols-[1.38fr_0.92fr] lg:items-center">
+        <div ref={noteCardRef} className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.76)] p-8 shadow-[0_24px_90px_rgba(1,17,27,0.52)] backdrop-blur-2xl md:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,180,216,0.14),transparent_20%),linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))]" />
           <div className="relative">
-            <div className="text-xs font-medium uppercase tracking-[0.3em] text-(--c-primary)/70">
-              A note from our GM
-            </div>
-
             <div className="mt-8">
               <div className="flex flex-wrap gap-x-3 gap-y-1 text-3xl font-light leading-tight text-white md:text-3xl md:leading-[1.08]">
                 <span><span className="text-4xl font-black text-(--c-primary) md:text-5xl">G</span>roup</span>
@@ -71,9 +118,9 @@ export function GmNoteSection() {
               </div>
             </div>
           </div>
-        </Reveal>
+        </div>
 
-        <Reveal className="grid gap-4">
+        <div ref={sideCardsRef} className="grid gap-4">
           <div className="rounded-4xl border border-(--border) bg-[rgba(255,255,255,0.03)] p-6 backdrop-blur-xl">
             <div className="text-[11px] font-medium uppercase tracking-[0.26em] text-(--dim)">
               Leadership signal
@@ -103,7 +150,8 @@ export function GmNoteSection() {
               ))}
             </div>
           </div>
-        </Reveal>
+        </div>
+        </div>
       </div>
     </section>
   );
