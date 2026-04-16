@@ -11,6 +11,11 @@
 .gdtd-glow { animation: gdtd-glow 2s ease-in-out infinite; }
 .ring-pulse { animation: ring-pulse 2s ease-in-out infinite; }
 
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 :root {
   --navy: #011d2e;
   --navy2: #02304a;

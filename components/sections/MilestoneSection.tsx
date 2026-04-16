@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { gsap, ScrollTrigger, useGSAP } from "@/src/gsap-init";
 import type { LucideIcon } from "lucide-react";
 
@@ -84,199 +85,182 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Network,
 };
 
-/* ─── Shared animated spine ───────────────────────────────────────────────── */
-function TimelineSpine({
-  containerRef,
-  className,
+/* ─── Quarter columns ─────────────────────────────────────────────────────── */
+const QUARTERS = ["Q3 2025", "Q4 2025", "Q1 2026", "Q2 2026"] as const;
+
+/* ─── Sorted swimlane order ───────────────────────────────────────────────── */
+const SWIMLANE_ORDER: MilestoneCategory[] = [
+  "division-wide",
+  "engineering-platforms",
+  "engineering-products",
+  "digital-products",
+  "digital-banking",
+];
+
+/* ─── Gantt bar (one milestone) ───────────────────────────────────────────── */
+function GanttBar({
+  milestone,
+  config,
+  delay,
+  onHover,
+  onLeave,
 }: {
-  containerRef: React.RefObject<HTMLDivElement | null>;
-  className: string;
+  milestone: Milestone;
+  config: (typeof CATEGORY_CONFIG)[MilestoneCategory];
+  delay: number;
+  onHover: (ms: Milestone, rect: DOMRect) => void;
+  onLeave: () => void;
 }) {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const fillRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (!fillRef.current || !containerRef.current) return;
-    gsap.set(fillRef.current, { scaleY: 0 });
-    gsap.to(fillRef.current, {
-      scaleY: 1,
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 80%",
-        end: "bottom 20%",
-        scrub: 0.3,
-      },
-    });
-  }, { scope: wrapRef });
-
-  return (
-    <div ref={wrapRef} className={`pointer-events-none absolute ${className}`}>
-      <div className="relative h-full w-px">
-        <div className="absolute inset-0 bg-[rgba(255,255,255,0.06)]" />
-        <div
-          ref={fillRef}
-          className="absolute inset-0 origin-top bg-[linear-gradient(180deg,var(--teal),var(--blue-lt),var(--purple))]"
-          style={{ boxShadow: "0 0 12px 2px rgba(0,180,216,0.45)" }}
-        />
-      </div>
-    </div>
-  );
-}
-
-/* ─── Timeline node dot ───────────────────────────────────────────────────── */
-function TimelineNode({ color }: { color: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const pulseRef = useRef<HTMLDivElement>(null);
-  const coreRef = useRef<HTMLDivElement>(null);
+  const Icon = ICON_MAP[milestone.icon];
 
   useGSAP(() => {
     if (!ref.current) return;
-    // Core dot entrance
     gsap.fromTo(
-      coreRef.current,
-      { scale: 0, opacity: 0 },
+      ref.current,
+      { scaleX: 0, opacity: 0 },
       {
-        scale: 1,
+        scaleX: 1,
         opacity: 1,
-        duration: 0.5,
-        ease: "back.out(2)",
+        duration: 0.6,
+        delay,
+        ease: "power3.out",
+        transformOrigin: "left center",
         scrollTrigger: {
           trigger: ref.current,
-          start: "top 85%",
+          start: "top 90%",
           toggleActions: "play none none none",
         },
-      }
-    );
-    // Pulse ring
-    gsap.fromTo(
-      pulseRef.current,
-      { scale: 1, opacity: 0.6 },
-      {
-        scale: 1.6,
-        opacity: 0,
-        duration: 2.4,
-        ease: "sine.inOut",
-        repeat: -1,
-        delay: 0.6,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 85%",
-          toggleActions: "play pause resume pause",
-        },
-      }
+      },
     );
   }, { scope: ref });
+
+  const handleMouseEnter = useCallback(() => {
+    if (ref.current) onHover(milestone, ref.current.getBoundingClientRect());
+  }, [milestone, onHover]);
 
   return (
     <div
       ref={ref}
-      className="relative z-10 flex h-6 w-6 shrink-0 items-center justify-center"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={onLeave}
+      className="group/bar relative flex h-full cursor-pointer items-center gap-2.5 rounded-lg px-3 transition-all duration-200 hover:brightness-125"
+      style={{
+        background: `linear-gradient(90deg, ${config.nodeColor}, ${config.nodeColor.replace("0.9)", "0.55)")})`,
+        boxShadow: `0 2px 16px 0 ${config.nodeColor.replace("0.9)", "0.25)")}`,
+      }}
     >
-      <div
-        ref={pulseRef}
-        className="absolute h-10 w-10 rounded-full"
-        style={{ border: `1px solid ${color}` }}
-      />
-      <div
-        ref={coreRef}
-        className="h-3 w-3 rounded-full"
-        style={{ background: color, boxShadow: `0 0 18px 4px ${color}` }}
-      />
+      {Icon && <Icon className="h-3.5 w-3.5 shrink-0 text-white/80" />}
+      <span className="truncate text-[11px] font-semibold text-white/90">
+        {milestone.title}
+      </span>
     </div>
   );
 }
 
-/* ─── Horizontal bridge (card ↔ spine) ────────────────────────────────────── */
-function HorizontalBridge({
-  color,
-  direction,
+/* ─── Hover detail card ───────────────────────────────────────────────────── */
+function GanttTooltip({
+  milestone,
+  position,
 }: {
-  color: string;
-  direction: "left" | "right";
+  milestone: Milestone;
+  position: { x: number; y: number };
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    if (!ref.current) return;
-    gsap.set(ref.current, { scaleX: 0, opacity: 0 });
-    gsap.to(ref.current, {
-      scaleX: 1,
-      opacity: 1,
-      duration: 0.4,
-      ease: "power3.out",
-      scrollTrigger: {
-        trigger: ref.current,
-        start: "top 85%",
-        toggleActions: "play none none none",
-      },
-    });
-  }, { scope: ref });
-
-  return (
-    <div
-      ref={ref}
-      className="h-px w-10 shrink-0"
-      style={{
-        background:
-          direction === "left"
-            ? `linear-gradient(90deg, transparent, ${color})`
-            : `linear-gradient(90deg, ${color}, transparent)`,
-        transformOrigin: direction === "left" ? "right" : "left",
-      }}
-    />
-  );
-}
-
-/* ─── Milestone card ──────────────────────────────────────────────────────── */
-function MilestoneCard({ milestone }: { milestone: Milestone }) {
   const cfg = CATEGORY_CONFIG[milestone.category];
   const Icon = ICON_MAP[milestone.icon];
 
   return (
-    <Reveal>
+    <div
+      className="pointer-events-none fixed z-[9999] w-[340px] animate-[fadeInUp_0.18s_ease-out]"
+      style={{ left: position.x, top: position.y }}
+    >
       <div
-        className={`relative overflow-hidden rounded-4xl border ${cfg.borderClass} bg-[rgba(11,29,46,0.62)] p-6 backdrop-blur-xl shadow-[0_18px_60px_rgba(1,17,27,0.3)] transition-colors duration-200 hover:border-[rgba(255,255,255,0.12)] hover:bg-[rgba(11,29,46,0.78)]`}
+        className={`relative overflow-hidden rounded-2xl border ${cfg.borderClass} bg-[rgba(11,29,46,0.95)] p-5 shadow-[0_24px_80px_rgba(1,17,27,0.6)] backdrop-blur-2xl`}
       >
-        {/* Top gradient accent bar */}
+        {/* Top accent */}
         <div className={`absolute inset-x-0 top-0 h-[2px] bg-linear-to-r ${cfg.barClass}`} />
 
-        {/* Header row */}
+        {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div
-            className={`inline-flex items-center rounded-full border px-3 py-1 ${cfg.pillClass} ${cfg.pillTextClass} text-[10px] font-semibold uppercase tracking-[0.28em]`}
+            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 ${cfg.pillClass} ${cfg.pillTextClass} text-[9px] font-semibold uppercase tracking-[0.28em]`}
           >
             {cfg.label}
           </div>
           {Icon && (
             <div
-              className={`rounded-2xl border ${cfg.borderClass} bg-[rgba(255,255,255,0.04)] p-2.5 ${cfg.pillTextClass}`}
+              className={`rounded-xl border ${cfg.borderClass} bg-[rgba(255,255,255,0.04)] p-2 ${cfg.pillTextClass}`}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
             </div>
           )}
         </div>
 
         {/* Quarter */}
-        <div className="mt-4 font-mono text-[11px] font-medium uppercase tracking-[0.3em] text-(--dim)">
+        <div className="mt-3 font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-(--dim)">
           {milestone.quarter}
         </div>
 
         {/* Title */}
-        <h3 className="mt-2 text-lg font-bold leading-snug tracking-[-0.01em] text-white">
+        <h3 className="mt-1.5 text-base font-bold leading-snug tracking-[-0.01em] text-white">
           {milestone.title}
         </h3>
 
         {/* Description */}
-        <p className="mt-3 text-sm leading-7 text-(--light)">{milestone.description}</p>
+        <p className="mt-2.5 text-[13px] leading-6 text-(--light)">
+          {milestone.description}
+        </p>
       </div>
-    </Reveal>
+    </div>
   );
 }
 
 /* ─── Main section ────────────────────────────────────────────────────────── */
 export function MilestoneSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<{
+    milestone: Milestone;
+    position: { x: number; y: number };
+  } | null>(null);
+
+  const handleBarHover = useCallback((ms: Milestone, rect: DOMRect) => {
+    const x = Math.min(rect.left, window.innerWidth - 360);
+    const y = rect.top - 220;
+    setHovered({ milestone: ms, position: { x, y: y < 8 ? rect.bottom + 12 : y } });
+  }, []);
+
+  const handleBarLeave = useCallback(() => setHovered(null), []);
+
+  /* ── Progress line that scrubs across quarters ───────────────────────── */
+  useGSAP(() => {
+    if (!chartRef.current) return;
+    const progressLine = chartRef.current.querySelector<HTMLDivElement>("[data-progress-line]");
+    if (!progressLine) return;
+    gsap.fromTo(
+      progressLine,
+      { scaleX: 0 },
+      {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: chartRef.current,
+          start: "top 70%",
+          end: "bottom 30%",
+          scrub: 0.4,
+        },
+      },
+    );
+  }, { scope: chartRef });
+
+  /* ── Group milestones by swimlane ────────────────────────────────────── */
+  const swimlanes = SWIMLANE_ORDER
+    .map((cat) => ({
+      category: cat,
+      config: CATEGORY_CONFIG[cat],
+      items: milestones.filter((m) => m.category === cat),
+    }))
+    .filter((s) => s.items.length > 0);
 
   return (
     <section
@@ -288,7 +272,7 @@ export function MilestoneSection() {
 
       <div
         ref={sectionRef}
-        className="ml-[8vw] max-w-[66vw] px-6 py-24 md:px-10 lg:px-16"
+        className="ml-[8vw] max-w-[66vw] xl:max-w-[60vw] 2xl:max-w-[66vw] px-6 py-24 md:px-10 lg:px-16 xl:px-10 2xl:px-16"
       >
         {/* ── Section header ──────────────────────────────────────────────── */}
         <Reveal className="max-w-3xl">
@@ -307,109 +291,121 @@ export function MilestoneSection() {
             From platform stabilisation to live product launches, these are the delivery
             signals that mark GDTD&apos;s progress across quarters.
           </p>
-
-          {/* Category legend */}
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            {(
-              Object.entries(CATEGORY_CONFIG) as [
-                MilestoneCategory,
-                (typeof CATEGORY_CONFIG)[MilestoneCategory],
-              ][]
-            ).map(([key, cfg]) => (
-              <div
-                key={key}
-                className={`rounded-full border px-3 py-1.5 ${cfg.pillClass} ${cfg.pillTextClass} text-[10px] font-semibold uppercase tracking-[0.26em]`}
-              >
-                {cfg.label}
-              </div>
-            ))}
-          </div>
         </Reveal>
 
-        {/* ── Timeline ────────────────────────────────────────────────────── */}
-        <div className="relative mt-16">
+        {/* ── Gantt Chart ─────────────────────────────────────────────────── */}
+        <Reveal className="mt-16">
+          <div
+            ref={chartRef}
+            className="relative overflow-hidden rounded-4xl border border-(--border) bg-[rgba(11,29,46,0.72)] p-6 shadow-[0_24px_100px_rgba(1,17,27,0.55)] backdrop-blur-2xl md:p-8"
+          >
+            {/* Hover hint */}
+            <div className="mb-4 flex items-center gap-2 text-[12px] tracking-[0.16em] text-(--muted)/60">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-50"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              Hover over items for details
+            </div>
 
-          {/* ── Mobile: left-rail ───────────────────────────────────────── */}
-          <div className="relative flex flex-col lg:hidden">
-            {/* Animated left spine */}
-            <TimelineSpine
-              containerRef={sectionRef}
-              className="inset-y-0 left-[11px]"
-            />
-
-            {milestones.map((ms) => {
-              const cfg = CATEGORY_CONFIG[ms.category];
-              return (
-                <div key={ms.id} className="relative flex gap-5 pb-8 last:pb-0">
-                  {/* Node on the left rail */}
-                  <div className="flex w-6 shrink-0 flex-col items-center pt-5">
-                    <TimelineNode color={cfg.nodeColor} />
+            {/* ── Quarter column headers ─────────────────────────────────── */}
+            <div className="mb-1 grid grid-cols-[180px_1fr] gap-0">
+              {/* Spacer for label column */}
+              <div />
+              {/* Quarter headers */}
+              <div className="grid grid-cols-4">
+                {QUARTERS.map((q) => (
+                  <div
+                    key={q}
+                    className="border-l border-[rgba(255,255,255,0.06)] px-3 py-2 text-center font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-(--dim)"
+                  >
+                    {q}
                   </div>
-                  {/* Card */}
-                  <div className="min-w-0 flex-1">
-                    <MilestoneCard milestone={ms} />
+                ))}
+              </div>
+            </div>
+
+            {/* ── Scrubbing progress line ────────────────────────────────── */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 grid grid-cols-[180px_1fr]">
+              <div />
+              <div className="relative">
+                <div
+                  data-progress-line
+                  className="absolute top-[52px] bottom-0 left-0 w-full origin-left border-r-2 border-[var(--teal)]"
+                  style={{
+                    background: "linear-gradient(90deg, rgba(0,180,216,0.06), rgba(0,180,216,0.02))",
+                    boxShadow: "inset -2px 0 12px rgba(0,180,216,0.3)",
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* ── Vertical quarter dividers ──────────────────────────────── */}
+            <div className="pointer-events-none absolute inset-x-0 top-[52px] bottom-0 grid grid-cols-[180px_1fr]">
+              <div />
+              <div className="grid grid-cols-4">
+                {QUARTERS.map((q) => (
+                  <div key={q} className="border-l border-[rgba(255,255,255,0.04)]" />
+                ))}
+              </div>
+            </div>
+
+            {/* ── Swimlanes ─────────────────────────────────────────────── */}
+            <div className="relative flex flex-col">
+              {swimlanes.map((lane, laneIdx) => (
+                <div
+                  key={lane.category}
+                  className={`grid grid-cols-[180px_1fr] gap-0 ${
+                    laneIdx > 0 ? "border-t border-[rgba(255,255,255,0.06)]" : ""
+                  }`}
+                >
+                  {/* Lane label */}
+                  <div className="flex items-center gap-3 py-4 pr-4">
+                    <div
+                      className="h-8 w-1 shrink-0 rounded-full"
+                      style={{
+                        background: `linear-gradient(180deg, ${lane.config.nodeColor}, ${lane.config.nodeColor.replace("0.9)", "0.4)")})`,
+                      }}
+                    />
+                    <span
+                      className="text-[11px] font-semibold uppercase tracking-[0.18em]"
+                      style={{ color: lane.config.nodeColor }}
+                    >
+                      {lane.config.label}
+                    </span>
+                  </div>
+
+                  {/* Lane bars: each item positioned in its quarter column */}
+                  <div className="relative grid grid-cols-4 gap-y-2 py-3">
+                    {lane.items.map((ms, barIdx) => {
+                      const colIdx = QUARTERS.indexOf(ms.quarter as typeof QUARTERS[number]);
+                      if (colIdx < 0) return null;
+                      return (
+                        <div
+                          key={ms.id}
+                          className="px-1.5 py-1"
+                          style={{ gridColumn: colIdx + 1, minHeight: 36 }}
+                        >
+                          <GanttBar
+                            milestone={ms}
+                            config={lane.config}
+                            delay={0.08 * laneIdx + 0.06 * barIdx}
+                            onHover={handleBarHover}
+                            onLeave={handleBarLeave}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* ── Desktop: alternating two-column with central spine ──────── */}
-          <div className="hidden lg:block">
-            {/* Central vertical spine */}
-            <TimelineSpine
-              containerRef={sectionRef}
-              className="inset-y-0 left-1/2 -translate-x-1/2"
-            />
-
-            <div className="flex flex-col">
-              {milestones.map((ms, i) => {
-                const cfg = CATEGORY_CONFIG[ms.category];
-                const isLeft = i % 2 === 0;
-
-                return (
-                  <div
-                    key={ms.id}
-                    className="grid grid-cols-[1fr_64px_1fr] items-center py-5"
-                  >
-                    {/* Left slot */}
-                    <div className="flex items-center">
-                      {isLeft ? (
-                        <>
-                          <div className="min-w-0 flex-1">
-                            <MilestoneCard milestone={ms} />
-                          </div>
-                          {/* Bridge from card to spine */}
-                          <HorizontalBridge color={cfg.nodeColor} direction="left" />
-                        </>
-                      ) : null}
-                    </div>
-
-                    {/* Central node */}
-                    <div className="flex justify-center">
-                      <TimelineNode color={cfg.nodeColor} />
-                    </div>
-
-                    {/* Right slot */}
-                    <div className="flex items-center">
-                      {!isLeft ? (
-                        <>
-                          {/* Bridge from spine to card */}
-                          <HorizontalBridge color={cfg.nodeColor} direction="right" />
-                          <div className="min-w-0 flex-1">
-                            <MilestoneCard milestone={ms} />
-                          </div>
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
-                );
-              })}
+              ))}
             </div>
           </div>
-
-        </div>
+        </Reveal>
       </div>
+
+      {/* ── Floating hover card (portalled to body to escape ScrollSmoother transforms) */}
+      {hovered && createPortal(
+        <GanttTooltip milestone={hovered.milestone} position={hovered.position} />,
+        document.body,
+      )}
     </section>
   );
 }
