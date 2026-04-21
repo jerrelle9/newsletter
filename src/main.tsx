@@ -16,3 +16,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <App />
   </React.StrictMode>
 );
+
+// ── Lightweight page-view beacon ────────────────────────────────────────────
+try {
+  navigator.sendBeacon("/api/track", JSON.stringify({ path: location.pathname }));
+} catch { /* silent */ }

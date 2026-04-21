@@ -1,0 +1,46 @@
+{
+  "views": [
+    {
+      "path": "/",
+      "ip": "127.0.0.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "ts": "2026-04-16T19:27:36.229Z"
+    },
+    {
+      "path": "/",
+      "ip": "127.0.0.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+      "ts": "2026-04-16T19:34:36.524Z"
+    },
+    {
+      "path": "/",
+      "ip": "10.137.4.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+      "ts": "2026-04-17T14:12:14.304Z"
+    },
+    {
+      "path": "/",
+      "ip": "10.137.4.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+      "ts": "2026-04-17T14:14:20.010Z"
+    },
+    {
+      "path": "/",
+      "ip": "10.137.4.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+      "ts": "2026-04-17T14:14:23.517Z"
+    },
+    {
+      "path": "/",
+      "ip": "10.137.4.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+      "ts": "2026-04-17T14:14:26.483Z"
+    },
+    {
+      "path": "/",
+      "ip": "10.137.4.1",
+      "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0",
+      "ts": "2026-04-20T12:01:16.253Z"
+    }
+  ]
+}
