@@ -28,32 +28,38 @@ import { milestones, type Milestone, type MilestoneCategory } from "@/data/miles
 const CATEGORY_CONFIG: Record<
   MilestoneCategory,
   {
+    label: string;
     barClass: string;
     nodeColor: string;
     borderClass: string;
   }
 > = {
   "engineering-platforms": {
+    label: "Engineering Platforms",
     barClass: "from-[var(--teal)] to-[var(--blue)]",
     nodeColor: "rgba(0,180,216,0.9)",
     borderClass: "border-[rgba(0,180,216,0.14)]",
   },
   "engineering-products": {
+    label: "Engineering Products",
     barClass: "from-[var(--blue)] to-[var(--purple)]",
     nodeColor: "rgba(139,92,246,0.9)",
     borderClass: "border-[rgba(139,92,246,0.14)]",
   },
   "digital-products": {
+    label: "Digital Products",
     barClass: "from-[var(--green)] to-[var(--teal)]",
     nodeColor: "rgba(6,214,160,0.9)",
     borderClass: "border-[rgba(6,214,160,0.14)]",
   },
   "digital-banking": {
+    label: "Digital Banking",
     barClass: "from-[var(--teal)] to-[var(--blue-lt)]",
     nodeColor: "rgba(0,180,230,0.9)",
     borderClass: "border-[rgba(0,180,230,0.14)]",
   },
   "division-wide": {
+    label: "Division Wide",
     barClass: "from-[var(--gold)] to-[var(--orange)]",
     nodeColor: "rgba(245,166,35,0.9)",
     borderClass: "border-[rgba(245,166,35,0.14)]",
@@ -293,16 +299,19 @@ export function MilestoneSection() {
               Hover over items for details
             </div>
 
-            {/* ── Quarter column headers ─────────────────────────────────── */}
-            <div className="mb-1 grid grid-cols-4">
-              {QUARTERS.map((q) => (
-                <div
-                  key={q}
-                  className="border-l border-[rgba(255,255,255,0.06)] px-3 py-2 text-center font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-(--dim)"
-                >
-                  {q}
-                </div>
-              ))}
+            {/* ── Header row: label spacer + quarter columns ────────────── */}
+            <div className="mb-1 flex">
+              <div className="w-36 shrink-0" />
+              <div className="grid flex-1 grid-cols-4">
+                {QUARTERS.map((q) => (
+                  <div
+                    key={q}
+                    className="border-l border-[rgba(255,255,255,0.06)] px-3 py-2 text-center font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-(--dim)"
+                  >
+                    {q}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* ── Scrubbing progress line ────────────────────────────────── */}
@@ -319,11 +328,13 @@ export function MilestoneSection() {
               </div>
             </div>
 
-            {/* ── Vertical quarter dividers ──────────────────────────────── */}
-            <div className="pointer-events-none absolute inset-x-0 top-[52px] bottom-0 grid grid-cols-4">
-              {QUARTERS.map((q) => (
-                <div key={q} className="border-l border-[rgba(255,255,255,0.04)]" />
-              ))}
+            {/* ── Vertical quarter dividers (offset by label column) ─────── */}
+            <div className="pointer-events-none absolute top-[52px] bottom-0 right-0" style={{ left: "9rem" }}>
+              <div className="grid h-full grid-cols-4">
+                {QUARTERS.map((q) => (
+                  <div key={q} className="border-l border-[rgba(255,255,255,0.04)]" />
+                ))}
+              </div>
             </div>
 
             {/* ── Swimlanes ─────────────────────────────────────────────── */}
@@ -331,10 +342,18 @@ export function MilestoneSection() {
               {swimlanes.map((lane, laneIdx) => (
                 <div
                   key={lane.category}
-                  className={laneIdx > 0 ? "border-t border-[rgba(255,255,255,0.06)]" : ""}
+                  className={`flex items-stretch${laneIdx > 0 ? " border-t border-[rgba(255,255,255,0.06)]" : ""}`}
                 >
+                  {/* Category label */}
+                  <div
+                    className="w-36 shrink-0 flex items-center py-3 pr-3 text-[10px] font-semibold uppercase tracking-[0.22em] leading-snug"
+                    style={{ color: lane.config.nodeColor }}
+                  >
+                    {lane.config.label}
+                  </div>
+
                   {/* Lane bars: each item positioned in its quarter column */}
-                  <div className="relative grid grid-cols-4 gap-y-2 py-3">
+                  <div className="relative flex-1 grid grid-cols-4 gap-y-2 py-3">
                     {lane.items.map((ms, barIdx) => {
                       const colIdx = QUARTERS.indexOf(ms.quarter as typeof QUARTERS[number]);
                       if (colIdx < 0) return null;

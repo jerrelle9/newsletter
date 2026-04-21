@@ -105,40 +105,40 @@ export const milestones: Milestone[] = [
     description:
       "Full user journey mapping, requirements analysis, and design artifacts completed for the Trinidad simple loan, Collections and Services (SSD), and BVI digital mortgage workstreams.",
   },
-  // {
-  //   id: "m-05",
-  //   quarter: "Q1 2026",
-  //   category: "division-wide",
-  //   icon: "Users",
-  //   title: "GDTD Division Headcount Reaches 58+ Staff",
-  //   description:
-  //     "The Division crossed a significant staffing milestone, cementing capacity across Engineering Platforms, Digital Platforms, Architecture, and Banking Delivery.",
-  // },
-  // {
-  //   id: "m-06",
-  //   quarter: "Q1 2026",
-  //   category: "digital-banking",
-  //   icon: "Building2",
-  //   title: "Branch Digitalisation MVP Onboarding Live",
-  //   description:
-  //     "Branch Digitalisation reached MVP onboarding milestones, enabling front-line staff to initiate and complete digital customer journeys inside the branch footprint.",
-  // },
-  // {
-  //   id: "m-07",
-  //   quarter: "Q2 2026",
-  //   category: "engineering-products",
-  //   icon: "TrendingUp",
-  //   title: "Wealth Dashboard & Trading Flows Enter Testing",
-  //   description:
-  //     "Wealth management dashboard and structured trading flows progressed into testing readiness, targeting launch for the Group's high-value customer segment.",
-  // },
-  // {
-  //   id: "m-08",
-  //   quarter: "Q2 2026",
-  //   category: "engineering-platforms",
-  //   icon: "Network",
-  //   title: "Enterprise API Gateway Rolled Out Division-Wide",
-  //   description:
-  //     "Shared API gateway standardised across all product squads, providing centralised rate-limiting, observability, and contract governance for all downstream integrations.",
-  // },
+  {
+    id: "m-05",
+    quarter: "Q1 2026",
+    category: "division-wide",
+    icon: "Users",
+    title: "GDTD Division Headcount Reaches 58+ Staff",
+    description:
+      "The Division crossed a significant staffing milestone, cementing capacity across Engineering Platforms, Digital Platforms, Architecture, and Banking Delivery.",
+  },
+  {
+    id: "m-06",
+    quarter: "Q1 2026",
+    category: "digital-banking",
+    icon: "Building2",
+    title: "Branch Digitalisation MVP Onboarding Live",
+    description:
+      "Branch Digitalisation reached MVP onboarding milestones, enabling front-line staff to initiate and complete digital customer journeys inside the branch footprint.",
+  },
+  {
+    id: "m-07",
+    quarter: "Q2 2026",
+    category: "engineering-products",
+    icon: "TrendingUp",
+    title: "Wealth Dashboard & Trading Flows Enter Testing",
+    description:
+      "Wealth management dashboard and structured trading flows progressed into testing readiness, targeting launch for the Group's high-value customer segment.",
+  },
+  {
+    id: "m-08",
+    quarter: "Q2 2026",
+    category: "engineering-platforms",
+    icon: "Network",
+    title: "Enterprise API Gateway Rolled Out Division-Wide",
+    description:
+      "Shared API gateway standardised across all product squads, providing centralised rate-limiting, observability, and contract governance for all downstream integrations.",
+  },
 ];

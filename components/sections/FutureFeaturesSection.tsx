@@ -253,8 +253,8 @@ export function FutureFeaturesSection() {
 
         {/* ── Longer-Term Strategic ────────────────────────────────────────── */}
         <Reveal className="mt-10">
-          <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-start">
-            <div>
+          <div className="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-center">
+            <div className="text-center">
               <div className="mb-2 text-[10px] font-medium uppercase tracking-[0.28em] text-(--dim)">
                 Strategic horizon
               </div>
@@ -262,7 +262,7 @@ export function FutureFeaturesSection() {
                 Longer-term capabilities
               </h3>
               <p className="mt-3 text-sm leading-7 text-(--light)">
-                The platform is architected for scale from day one — these enhancements extend its
+                The platform is architected for scale from day one - these enhancements extend its
                 reach to new markets, products, and partner ecosystems.
               </p>
             </div>

@@ -2,7 +2,7 @@ import { Layers3, Smartphone, Network, Landmark, Shield, Workflow } from "lucide
 
 export const pillars = [
   {
-    id: "01",
+    id: "0",
     title: "Engineering Platforms",
     body: "Shared technology foundations, cloud support, and platform reliability services that help the bank move safely and confidently.",
     icon: Layers3,

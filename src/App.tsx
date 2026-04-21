@@ -72,7 +72,7 @@ export default function App() {
             <StructureSection />
             <MilestoneSection />
             <FutureFeaturesSection />
-            <ContactSection />
+            {/* <ContactSection /> */}
           </main>
         </div>
       </div>
