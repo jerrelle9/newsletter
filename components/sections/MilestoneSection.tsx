@@ -12,6 +12,11 @@ import {
   Building2,
   TrendingUp,
   Network,
+  ClipboardList,
+  Cpu,
+  ShieldCheck,
+  FileCheck,
+  GitBranch,
 } from "lucide-react";
 import { GalaxyBackground } from "@/components/layout/GalaxyBackground";
 import { Reveal } from "@/components/layout/Reveal";
@@ -23,51 +28,33 @@ import { milestones, type Milestone, type MilestoneCategory } from "@/data/miles
 const CATEGORY_CONFIG: Record<
   MilestoneCategory,
   {
-    label: string;
     barClass: string;
-    pillClass: string;
-    pillTextClass: string;
     nodeColor: string;
     borderClass: string;
   }
 > = {
   "engineering-platforms": {
-    label: "Engineering Platforms",
     barClass: "from-[var(--teal)] to-[var(--blue)]",
-    pillClass: "bg-[rgba(0,180,216,0.12)] border-[rgba(0,180,216,0.22)]",
-    pillTextClass: "text-[var(--teal)]",
     nodeColor: "rgba(0,180,216,0.9)",
     borderClass: "border-[rgba(0,180,216,0.14)]",
   },
   "engineering-products": {
-    label: "Engineering Products",
     barClass: "from-[var(--blue)] to-[var(--purple)]",
-    pillClass: "bg-[rgba(0,150,199,0.12)] border-[rgba(139,92,246,0.22)]",
-    pillTextClass: "text-[var(--blue-lt)]",
     nodeColor: "rgba(139,92,246,0.9)",
     borderClass: "border-[rgba(139,92,246,0.14)]",
   },
   "digital-products": {
-    label: "Digital Products",
     barClass: "from-[var(--green)] to-[var(--teal)]",
-    pillClass: "bg-[rgba(6,214,160,0.12)] border-[rgba(6,214,160,0.22)]",
-    pillTextClass: "text-[var(--green)]",
     nodeColor: "rgba(6,214,160,0.9)",
     borderClass: "border-[rgba(6,214,160,0.14)]",
   },
   "digital-banking": {
-    label: "Digital Banking",
     barClass: "from-[var(--teal)] to-[var(--blue-lt)]",
-    pillClass: "bg-[rgba(0,180,216,0.10)] border-[rgba(0,180,216,0.20)]",
-    pillTextClass: "text-[var(--blue-lt)]",
     nodeColor: "rgba(0,180,230,0.9)",
     borderClass: "border-[rgba(0,180,230,0.14)]",
   },
   "division-wide": {
-    label: "Division-Wide",
     barClass: "from-[var(--gold)] to-[var(--orange)]",
-    pillClass: "bg-[rgba(245,166,35,0.12)] border-[rgba(245,166,35,0.22)]",
-    pillTextClass: "text-[var(--gold)]",
     nodeColor: "rgba(245,166,35,0.9)",
     borderClass: "border-[rgba(245,166,35,0.14)]",
   },
@@ -83,6 +70,11 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Building2,
   TrendingUp,
   Network,
+  ClipboardList,
+  Cpu,
+  ShieldCheck,
+  FileCheck,
+  GitBranch,
 };
 
 /* ─── Quarter columns ─────────────────────────────────────────────────────── */
@@ -181,20 +173,16 @@ function GanttTooltip({
         <div className={`absolute inset-x-0 top-0 h-[2px] bg-linear-to-r ${cfg.barClass}`} />
 
         {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div
-            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 ${cfg.pillClass} ${cfg.pillTextClass} text-[9px] font-semibold uppercase tracking-[0.28em]`}
-          >
-            {cfg.label}
-          </div>
-          {Icon && (
+        {Icon && (
+          <div className="flex justify-end">
             <div
-              className={`rounded-xl border ${cfg.borderClass} bg-[rgba(255,255,255,0.04)] p-2 ${cfg.pillTextClass}`}
+              className={`rounded-xl border ${cfg.borderClass} bg-[rgba(255,255,255,0.04)] p-2`}
+              style={{ color: cfg.nodeColor }}
             >
               <Icon className="h-3.5 w-3.5" />
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Quarter */}
         <div className="mt-3 font-mono text-[10px] font-medium uppercase tracking-[0.3em] text-(--dim)">
@@ -306,26 +294,20 @@ export function MilestoneSection() {
             </div>
 
             {/* ── Quarter column headers ─────────────────────────────────── */}
-            <div className="mb-1 grid grid-cols-[180px_1fr] gap-0">
-              {/* Spacer for label column */}
-              <div />
-              {/* Quarter headers */}
-              <div className="grid grid-cols-4">
-                {QUARTERS.map((q) => (
-                  <div
-                    key={q}
-                    className="border-l border-[rgba(255,255,255,0.06)] px-3 py-2 text-center font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-(--dim)"
-                  >
-                    {q}
-                  </div>
-                ))}
-              </div>
+            <div className="mb-1 grid grid-cols-4">
+              {QUARTERS.map((q) => (
+                <div
+                  key={q}
+                  className="border-l border-[rgba(255,255,255,0.06)] px-3 py-2 text-center font-mono text-[11px] font-medium uppercase tracking-[0.24em] text-(--dim)"
+                >
+                  {q}
+                </div>
+              ))}
             </div>
 
             {/* ── Scrubbing progress line ────────────────────────────────── */}
-            <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0 grid grid-cols-[180px_1fr]">
-              <div />
-              <div className="relative">
+            <div className="pointer-events-none absolute inset-x-0 top-0 bottom-0">
+              <div className="relative h-full">
                 <div
                   data-progress-line
                   className="absolute top-[52px] bottom-0 left-0 w-full origin-left border-r-2 border-[var(--teal)]"
@@ -338,13 +320,10 @@ export function MilestoneSection() {
             </div>
 
             {/* ── Vertical quarter dividers ──────────────────────────────── */}
-            <div className="pointer-events-none absolute inset-x-0 top-[52px] bottom-0 grid grid-cols-[180px_1fr]">
-              <div />
-              <div className="grid grid-cols-4">
-                {QUARTERS.map((q) => (
-                  <div key={q} className="border-l border-[rgba(255,255,255,0.04)]" />
-                ))}
-              </div>
+            <div className="pointer-events-none absolute inset-x-0 top-[52px] bottom-0 grid grid-cols-4">
+              {QUARTERS.map((q) => (
+                <div key={q} className="border-l border-[rgba(255,255,255,0.04)]" />
+              ))}
             </div>
 
             {/* ── Swimlanes ─────────────────────────────────────────────── */}
@@ -352,26 +331,8 @@ export function MilestoneSection() {
               {swimlanes.map((lane, laneIdx) => (
                 <div
                   key={lane.category}
-                  className={`grid grid-cols-[180px_1fr] gap-0 ${
-                    laneIdx > 0 ? "border-t border-[rgba(255,255,255,0.06)]" : ""
-                  }`}
+                  className={laneIdx > 0 ? "border-t border-[rgba(255,255,255,0.06)]" : ""}
                 >
-                  {/* Lane label */}
-                  <div className="flex items-center gap-3 py-4 pr-4">
-                    <div
-                      className="h-8 w-1 shrink-0 rounded-full"
-                      style={{
-                        background: `linear-gradient(180deg, ${lane.config.nodeColor}, ${lane.config.nodeColor.replace("0.9)", "0.4)")})`,
-                      }}
-                    />
-                    <span
-                      className="text-[11px] font-semibold uppercase tracking-[0.18em]"
-                      style={{ color: lane.config.nodeColor }}
-                    >
-                      {lane.config.label}
-                    </span>
-                  </div>
-
                   {/* Lane bars: each item positioned in its quarter column */}
                   <div className="relative grid grid-cols-4 gap-y-2 py-3">
                     {lane.items.map((ms, barIdx) => {
