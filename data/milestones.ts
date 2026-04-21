@@ -83,7 +83,7 @@ export const milestones: Milestone[] = [
     quarter: "Q4 2025",
     category: "digital-products",
     icon: "ShieldCheck",
-    title: "GIGR#12_25 Approved — LMS OPEX Budget Secured",
+    title: "GIGR#12_25 Approved - LMS OPEX Budget Secured",
     description:
       "GIGR#12_25 formally approved by management, securing the OPEX budget for the full Loan Management Solution (HES LoanBox) and enabling the project to progress beyond the planning and readiness phase.",
   },

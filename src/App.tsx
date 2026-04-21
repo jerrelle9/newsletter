@@ -7,6 +7,7 @@ import { GmNoteSection } from "@/components/sections/GmNoteSection";
 import { StructureSection } from "@/components/sections/StructureSection";
 import { MilestoneSection } from "@/components/sections/MilestoneSection";
 import { FutureFeaturesSection } from "@/components/sections/FutureFeaturesSection";
+import { RoadmapSection } from "@/components/sections/RoadmapSection";
 import { ContactSection } from "@/components/sections/ContactSection";
 
 // Prevent the browser from jumping to its own saved scroll position
@@ -71,7 +72,8 @@ export default function App() {
             <GmNoteSection />
             <StructureSection />
             <MilestoneSection />
-            <FutureFeaturesSection />
+            {/* <FutureFeaturesSection /> */}
+            <RoadmapSection />
             {/* <ContactSection /> */}
           </main>
         </div>
