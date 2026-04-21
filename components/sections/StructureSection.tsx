@@ -840,7 +840,7 @@ export function StructureSection() {
                       from={{ opacity: 0, y: 24 }}
                       delay={0.15 + i * 0.08}
                       duration={0.6}
-                      className="group flex h-[560px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                      className="group flex h-[420px] flex-col rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[var(--navy)] p-7 transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(255,255,255,0.18)] hover:shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
                     >
                       {/* Header row: accent bar + platform badge */}
                       <div className="mb-6 flex items-center justify-between">
